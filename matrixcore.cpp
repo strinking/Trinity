@@ -234,6 +234,19 @@ void MatrixCore::sync() {
             }
         }
 
+        for(const auto id : document.object()["rooms"].toObject()["leave"].toObject().keys()) {
+
+            if(joinedRooms.count(id)) {
+                Room* room = resolveRoomId(id);
+                room->setJoinState("left");
+
+                joinedRooms.removeOne(id);
+                rooms.removeOne(room);
+
+                roomListModel.fullUpdate();
+            }
+        }
+
         unsigned int i = 0;
         for(const auto& room : document.object()["rooms"].toObject()["join"].toObject()) {
             Room* roomState = nullptr;
@@ -351,6 +364,18 @@ void MatrixCore::joinRoom(const QString& id) {
     });
 }
 
+void MatrixCore::leaveRoom(const QString& id) {
+    network::post("/_matrix/client/r0/rooms/" + id + "/leave");
+}
+
+void MatrixCore::inviteToRoom(Room* room, const QString& userId) {
+    const QJsonObject inviteObject {
+        {"user_id", userId}
+    };
+
+    network::postJSON("/_matrix/client/r0/rooms/" + room->getId() + "/invite", inviteObject, [](QNetworkReply*) {});
+}
+
 void MatrixCore::updateMembers(Room* room) {
     if(!room)
         return;
@@ -423,14 +448,6 @@ void MatrixCore::readMessageHistory(Room* room) {
     });
 }
 
-void MatrixCore::invite(Room* room, const QString& userId) {
-    const QJsonObject inviteObject {
-        {"user_id", userId}
-    };
-
-    network::postJSON("/_matrix/client/r0/rooms/" + room->getId() + "/invite", inviteObject, [](QNetworkReply*) {});
-}
-
 void MatrixCore::updateMemberCommunities(Member* member) {
     if(!member)
         return;
@@ -501,7 +518,10 @@ void MatrixCore::changeCurrentRoom(Room* room) {
 }
 
 void MatrixCore::changeCurrentRoom(const unsigned int index) {
-    changeCurrentRoom(rooms[index]);
+    if(index <= rooms.size())
+        changeCurrentRoom(rooms[index]);
+    else
+        changeCurrentRoom(&emptyRoom);
 }
 
 Member* MatrixCore::resolveMemberId(const QString& id) const {
@@ -629,7 +649,7 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
     if(event["unsigned"].toObject().keys().contains("redacted_because"))
         return;
 
-    if(!found && eventType == "mroom.message") {
+    if(!found && eventType == "m.room.message") {
         const QString msgType = event["content"].toObject()["msgtype"].toString();
         if(msgType != "m.text")
             return;

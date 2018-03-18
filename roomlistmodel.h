@@ -30,6 +30,10 @@ public:
         endInsertRows();
     }
 
+    void fullUpdate() {
+        emit layoutChanged();
+    }
+
     void updateRoom(Room* room);
 
 protected:

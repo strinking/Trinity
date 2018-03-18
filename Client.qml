@@ -112,6 +112,30 @@ Rectangle {
 
                     onClicked: stack.push("qrc:/RoomSettings.qml", {"room": matrix.getRoom(index)})
                 }
+
+                MenuSeparator {}
+
+                MenuItem {
+                    text: "Leave Room"
+
+                    onReleased: {
+                        showDialog("Leave Confirmation", "Are you sure you want to leave " + alias + "?", [
+                                       {
+                                           text: "Yes",
+                                           onClicked: function(dialog) {
+                                                matrix.leaveRoom(id)
+                                                dialog.close()
+                                           }
+                                       },
+                                       {
+                                           text: "No",
+                                           onClicked: function(dialog) {
+                                               dialog.close()
+                                           }
+                                       }
+                                   ])
+                    }
+                }
             }
        }
     }
@@ -563,7 +587,7 @@ Rectangle {
                                     text: alias
 
                                     onReleased: {
-                                        matrix.invite(matrix.resolveRoomId(id), memberId)
+                                        matrix.inviteToRoom(matrix.resolveRoomId(id), memberId)
                                     }
                                 }
                             }

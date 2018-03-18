@@ -44,10 +44,11 @@ public:
 
     // room
     Q_INVOKABLE void joinRoom(const QString& id);
+    Q_INVOKABLE void leaveRoom(const QString& id);
+    Q_INVOKABLE void inviteToRoom(Room* room, const QString& userId);
+
     Q_INVOKABLE void updateMembers(Room* room);
     Q_INVOKABLE void readMessageHistory(Room* room);
-
-    Q_INVOKABLE void invite(Room* room, const QString& userId);
 
     // member
     Q_INVOKABLE void updateMemberCommunities(Member* member);

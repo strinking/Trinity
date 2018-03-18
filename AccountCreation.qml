@@ -93,14 +93,14 @@ Rectangle {
                 showDialog("Needs additional authentication", "Please complete the recaptcha", [
                                {
                                    text: "Done",
-                                   onClicked: function() {
+                                   onClicked: function(dialog) {
                                        matrix.registerAccount(usernameField.text, passwordField.text, data["session"], data["type"])
                                    }
                                },
                                {
                                    text: "Cancel",
-                                   onClicked: function() {
-                                       close()
+                                   onClicked: function(dialog) {
+                                       dialog.close()
                                        setRegisterState(false)
                                    }
                                }

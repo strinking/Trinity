@@ -35,7 +35,7 @@ Popup {
         text: "Invite"
 
         onClicked: {
-            matrix.invite(matrix.currentRoom, idField.text)
+            matrix.inviteToRoom(matrix.currentRoom, idField.text)
             close()
         }
     }

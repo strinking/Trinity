@@ -17,19 +17,6 @@ Popup {
 
     property var buttons: []
 
-    Component.onCompleted: {
-        if(!buttons)
-            return;
-
-        var lastX = 0
-        for(var i = 0; i < buttons.length; i++) {
-            var button = popupButton.createObject(buttonHolder, {text: buttons[i].text, x: lastX })
-            lastX = button.width + 10
-
-            button.onClicked.connect(buttons[i].onClicked)
-        }
-    }
-
     Text {
         id: titleLabel
 
@@ -48,16 +35,18 @@ Popup {
         color: "white"
     }
 
-    Rectangle {
-        id: buttonHolder
+    Repeater {
+        model: buttons
 
-        anchors.top: descriptionLabel.bottom
-        anchors.topMargin: 10
-    }
+        delegate: Button {
+            text: buttons[index].text
 
-    Component {
-        id: popupButton
+            anchors.top: descriptionLabel.bottom
+            anchors.topMargin: 10
 
-        Button {}
+            x: index * width + 10
+
+            onClicked: buttons[index].onClicked(dialog)
+        }
     }
 }
