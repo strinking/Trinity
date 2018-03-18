@@ -20,6 +20,12 @@ MatrixCore::MatrixCore(QObject* parent) : QObject(parent), roomListModel(rooms),
     emptyRoom.setTopic("There is nothing here.");
 
     roomListSortModel.setSourceModel(&roomListModel);
+    roomListSortModel.setSortRole(RoomListModel::SectionRole);
+
+    connect(this, &MatrixCore::roomListChanged, [this] {
+        roomListSortModel.sort(0);
+    });
+
     directoryListSortModel.setSourceModel(&directoryListModel);
 }
 
@@ -354,6 +360,17 @@ void MatrixCore::removeMessage(const QString& eventId) {
     });
 }
 
+void MatrixCore::startDirectChat(const QString& id) {
+    const QJsonObject roomObject {
+        {"visibility", "private"},
+        {"creation_content", QJsonObject{{"m.federate", false}}},
+        {"preset", "private_chat"},
+        {"is_direct", true},
+        {"invite", QJsonArray{id}}
+    };
+
+    network::postJSON("/_matrix/client/r0/createRoom", roomObject, [](QNetworkReply*) {});
+}
 
 void MatrixCore::joinRoom(const QString& id) {
     network::post("/_matrix/client/r0/rooms/" + id + "/join", [this, id](QNetworkReply* reply) {
@@ -671,14 +688,19 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
             }
         }
     } else if(eventType == "m.room.member") {
+        if(event["content"].toObject()["user_id"].toString() == userId)
+            return;
+
         if(event["content"].toObject().contains("is_direct"))
             room.direct = event["content"].toObject()["is_direct"].toBool();
 
         if(room.direct) {
             room.setName(event["content"].toObject()["displayname"].toString());
 
-            const QString imageId = event["content"].toObject()["avatar_url"].toString().remove("mxc://");
-            room.setAvatar(network::homeserverURL + "/_matrix/media/r0/thumbnail/" + imageId + "?width=64&height=64&method=scale");
+            if(!event["content"].toObject()["avatar_url"].isNull()) {
+                const QString imageId = event["content"].toObject()["avatar_url"].toString().remove("mxc://");
+                room.setAvatar(network::homeserverURL + "/_matrix/media/r0/thumbnail/" + imageId + "?width=64&height=64&method=scale");
+            }
         }
 
         roomListModel.updateRoom(&room);

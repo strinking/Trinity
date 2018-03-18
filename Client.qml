@@ -21,7 +21,7 @@ Rectangle {
 
        clip: true
 
-       section.property: "joinState"
+       section.property: "section"
        section.criteria: ViewSection.FullString
        section.delegate: Rectangle {
            width: parent.width
@@ -40,7 +40,7 @@ Rectangle {
             width: 150
             height: 25
 
-            property bool selected: channels.currentIndex === index
+            property bool selected: channels.currentIndex === matrix.roomListModel.getOriginalIndex(index)
 
             color: selected ? "white" : "transparent"
 
@@ -96,8 +96,9 @@ Rectangle {
                 onReleased: {
                     if(mouse.button == Qt.LeftButton) {
                         if(!selected) {
-                            matrix.changeCurrentRoom(index)
-                            channels.currentIndex = index
+                            var originalIndex = matrix.roomListModel.getOriginalIndex(index)
+                            matrix.changeCurrentRoom(originalIndex)
+                            channels.currentIndex = originalIndex
                         }
                     } else
                         contextMenu.popup()
@@ -580,6 +581,12 @@ Rectangle {
                             text: "Mention"
 
                             onReleased: messageInput.append(displayName + ": ")
+                        }
+
+                        MenuItem {
+                            text: "Start Direct Chat"
+
+                            onReleased: matrix.startDirectChat(id)
                         }
 
                         MenuSeparator {}

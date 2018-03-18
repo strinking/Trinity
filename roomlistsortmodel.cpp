@@ -4,11 +4,14 @@
 #include "roomlistmodel.h"
 
 bool RoomListSortModel::lessThan(const QModelIndex& left, const QModelIndex& right) const {
-    const QString joinStateLeft = sourceModel()->data(left, RoomListModel::JoinStateRole).toString();
-    const QString joinStateRight = sourceModel()->data(right, RoomListModel::JoinStateRole).toString();
+    const QString sectionLeft = sourceModel()->data(left, RoomListModel::SectionRole).toString();
+    const QString sectionRight = sourceModel()->data(right, RoomListModel::SectionRole).toString();
 
-    if(joinStateLeft == "invite")
+    if(sectionRight == "Direct Chats")
         return false;
 
-    return true;
+    if(sectionLeft == "Direct Chats")
+        return true;
+
+    return false;
 }

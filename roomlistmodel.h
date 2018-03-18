@@ -15,7 +15,9 @@ public:
         TopicRole,
         IdRole,
         HighlightCountRole,
-        NotificationCountRole
+        NotificationCountRole,
+        DirectRole,
+        SectionRole
     };
 
     RoomListModel(QList<Room*>& rooms);

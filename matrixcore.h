@@ -42,6 +42,8 @@ public:
     Q_INVOKABLE void sendMessage(Room* room, const QString& message);
     Q_INVOKABLE void removeMessage(const QString& eventId);
 
+    Q_INVOKABLE void startDirectChat(const QString& id);
+
     // room
     Q_INVOKABLE void joinRoom(const QString& id);
     Q_INVOKABLE void leaveRoom(const QString& id);
