@@ -477,27 +477,41 @@ Rectangle {
                 anchors.top: messages.parent.bottom
 
                 width: parent.width
-                height: 40
+                height: 55
 
                 color: Qt.rgba(0.1, 0.1, 0.1, 1.0)
 
-                TextArea {
-                    id: messageInput
+                ToolButton {
+                    id: attachButton
 
-                    width: parent.width - 10
-                    height: parent.height - 10
+                    icon.name: "mail-attachment"
+
+                    width: 30
+                    height: 30
 
                     anchors.top: parent.top
                     anchors.topMargin: 5
 
                     anchors.left: parent.left
                     anchors.leftMargin: 5
+                }
+
+                TextArea {
+                    id: messageInput
+
+                    width: parent.width - attachButton.width - 10
+                    height: 30
+
+                    anchors.top: parent.top
+                    anchors.topMargin: 5
+
+                    anchors.left: attachButton.right
+                    anchors.leftMargin: 5
 
                     anchors.right: parent.right
                     anchors.rightMargin: 5
 
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 5
+                    placeholderText: "Message " + matrix.currentRoom.name
 
                     Keys.onReturnPressed: {
                         if(event.modifiers & Qt.ShiftModifier) {
@@ -507,6 +521,36 @@ Rectangle {
                             clear()
                         }
                     }
+                }
+
+                ToolButton {
+                    id: markdownButton
+
+                    icon.name: "text-x-generic"
+
+                    width: 20
+                    height: 20
+
+                    anchors.top: messageInput.top
+                    anchors.topMargin: 5
+
+                    anchors.right: emojiButton.left
+                    anchors.rightMargin: 5
+                }
+
+                ToolButton {
+                    id: emojiButton
+
+                    icon.name: "face-smile"
+
+                    width: 20
+                    height: 20
+
+                    anchors.top: messageInput.top
+                    anchors.topMargin: 5
+
+                    anchors.right: messageInput.right
+                    anchors.rightMargin: 5
                 }
             }
         }
