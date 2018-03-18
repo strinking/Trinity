@@ -119,13 +119,14 @@ class Room : public QObject
     Q_OBJECT
     Q_PROPERTY(QString id MEMBER id NOTIFY idChanged)
     Q_PROPERTY(QString topic MEMBER topic NOTIFY topicChanged)
-    Q_PROPERTY(QString name MEMBER name NOTIFY nameChanged)
+    Q_PROPERTY(QString name READ getName NOTIFY nameChanged)
     Q_PROPERTY(QString avatar MEMBER avatar NOTIFY avatarChanged)
     Q_PROPERTY(QString joinState MEMBER joinState NOTIFY joinStateChanged)
     Q_PROPERTY(bool guestDenied MEMBER guestDenied NOTIFY guestDeniedChanged)
     Q_PROPERTY(QString invitedBy MEMBER invitedBy NOTIFY invitedByChanged)
     Q_PROPERTY(QString highlightCount READ getHighlightCount NOTIFY highlightCountChanged)
     Q_PROPERTY(QString notificationCount READ getNotificationCount NOTIFY notificationCountChanged)
+    Q_PROPERTY(bool direct MEMBER direct)
 public:
     void setId(const QString& id) {
         this->id = id;

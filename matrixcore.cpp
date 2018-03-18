@@ -27,6 +27,8 @@ MatrixCore::MatrixCore(QObject* parent) : QObject(parent), roomListModel(rooms),
     });
 
     directoryListSortModel.setSourceModel(&directoryListModel);
+
+    updateAccountInformation();
 }
 
 void MatrixCore::registerAccount(const QString &username, const QString &password, const QString& session, const QString& type) {
@@ -166,7 +168,8 @@ void MatrixCore::sync() {
                 if(document.object()["errcode"].toString() == "M_GUEST_ACCESS_FORBIDDEN") {
                     room->setGuestDenied(true);
                     return;
-                }
+                } else if(document.object()["errcode"].toString() == "M_NOT_FOUND")
+                    return;
 
                 room->setName(document.object()["name"].toString());
 
@@ -688,7 +691,8 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
             }
         }
     } else if(eventType == "m.room.member") {
-        if(event["content"].toObject()["user_id"].toString() == userId)
+        // avoid events tied to us
+        if(event["state_key"].toString() == userId)
             return;
 
         if(event["content"].toObject().contains("is_direct"))

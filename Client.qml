@@ -197,7 +197,7 @@ Rectangle {
 
                 fillMode: Image.PreserveAspectFit
 
-                source: matrix.currentRoom.avatar
+                source: matrix.currentRoom.avatar ? matrix.currentRoom.avatar : "placeholder.png"
 
                 layer.enabled: true
                 layer.effect: OpacityMask {
@@ -241,6 +241,9 @@ Rectangle {
                 anchors.leftMargin: 5
 
                 text: {
+                    if(matrix.currentRoom.direct)
+                        return "";
+
                     if(matrix.currentRoom.topic.length == 0)
                         return "This room has no topic set."
                     else
@@ -501,7 +504,7 @@ Rectangle {
 
             color: Qt.rgba(0.15, 0.15, 0.15, 1.0)
 
-            width: 200
+            width: matrix.currentRoom.direct ? 0 : 200
             height: parent.height - roomHeader.height
 
             ListView {
