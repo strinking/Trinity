@@ -16,8 +16,8 @@ public:
             icon->show();
     }
 
-    Q_INVOKABLE void showMessage(const QString content) {
-        icon->showMessage("Trinity", content);
+    Q_INVOKABLE void showMessage(const QString title, const QString content) {
+        icon->showMessage(title, content);
     }
 
     QSystemTrayIcon* icon;

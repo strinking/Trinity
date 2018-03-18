@@ -95,7 +95,7 @@ signals:
     void initialSyncFinished();
     void currentRoomChanged();
     void roomListChanged();
-    void message(QString content);
+    void message(QString sender, QString content);
     void homeserverChanged(bool valid, QString description);
     void displayNameChanged();
     void joinedCommunitiesChanged();
@@ -124,5 +124,5 @@ private:
     QMap<QString, Community*> idToCommunity;
     QMap<QString, Room*> idToRoom;
 
-    bool firstSync = true;
+    bool firstSync = true, traversingHistory = false;
 };

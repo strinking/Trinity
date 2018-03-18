@@ -414,8 +414,12 @@ void MatrixCore::readMessageHistory(Room* room) {
 
         room->prevBatch = document.object()["end"].toString();
 
+        traversingHistory = true;
+
         for(const auto event : document.object()["chunk"].toArray())
             consumeEvent(event.toObject(), *room, false);
+
+        traversingHistory = false;
     });
 }
 
@@ -640,7 +644,8 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
 
         addEvent(e);
 
-        emit message(e->getMsg());
+        if(!firstSync && !traversingHistory)
+            emit message(e->getSender(), e->getMsg());
     }
 }
 

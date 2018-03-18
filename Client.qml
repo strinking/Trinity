@@ -609,5 +609,12 @@ Rectangle {
             matrix.readMessageHistory(matrix.currentRoom)
             matrix.updateMembers(matrix.currentRoom)
         }
+
+        onMessage: {
+            console.log(content)
+            if(content.includes(matrix.displayName)) {
+                desktop.showMessage(matrix.resolveMemberId(sender).displayName, content)
+            }
+        }
     }
 }
