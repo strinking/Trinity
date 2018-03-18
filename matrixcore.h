@@ -62,6 +62,7 @@ public:
 
     Q_INVOKABLE Member* resolveMemberId(const QString& id) const;
     Q_INVOKABLE Community* resolveCommunityId(const QString& id) const;
+    Q_INVOKABLE Room* resolveRoomId(const QString& id) const;
 
     Q_INVOKABLE Room* getRoom(const unsigned int index) const;
 

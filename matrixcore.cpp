@@ -512,6 +512,10 @@ Community* MatrixCore::resolveCommunityId(const QString &id) const {
     return idToCommunity.value(id);
 }
 
+Room* MatrixCore::resolveRoomId(const QString &id) const {
+    return idToRoom.value(id);
+}
+
 Room* MatrixCore::getRoom(const unsigned int index) const {
     return rooms[index];
 }
@@ -625,7 +629,7 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
     if(event["unsigned"].toObject().keys().contains("redacted_because"))
         return;
 
-    if(!found && eventType == "m.room.message") {
+    if(!found && eventType == "mroom.message") {
         const QString msgType = event["content"].toObject()["msgtype"].toString();
         if(msgType != "m.text")
             return;

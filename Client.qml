@@ -483,6 +483,8 @@ Rectangle {
 
                     color: "transparent"
 
+                    property string memberId: id
+
                     Image {
                         id: memberAvatar
 
@@ -540,6 +542,22 @@ Rectangle {
                                 var popupContainer = popup.createObject(client, {"parent": client, "member": matrix.resolveMemberId(id)})
 
                                 popupContainer.open()
+                            }
+                        }
+
+                        Menu {
+                            title: "Invite to room"
+
+                            Repeater {
+                                model: matrix.roomListModel
+
+                                MenuItem {
+                                    text: alias
+
+                                    onReleased: {
+                                        matrix.invite(matrix.resolveRoomId(id), memberId)
+                                    }
+                                }
                             }
                         }
                     }
