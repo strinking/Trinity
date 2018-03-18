@@ -545,6 +545,14 @@ Rectangle {
                             }
                         }
 
+                        MenuItem {
+                            text: "Mention"
+
+                            onReleased: messageInput.append(displayName + ": ")
+                        }
+
+                        MenuSeparator {}
+
                         Menu {
                             title: "Invite to room"
 
