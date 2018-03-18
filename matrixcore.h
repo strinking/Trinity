@@ -23,6 +23,7 @@ class MatrixCore : public QObject
     Q_PROPERTY(QString displayName READ getDisplayName NOTIFY displayNameChanged)
     Q_PROPERTY(QVariantList joinedCommunities READ getJoinedCommunitiesList NOTIFY joinedCommunitiesChanged)
     Q_PROPERTY(RoomListSortModel* publicRooms READ getDirectoryListModel NOTIFY publicRoomsChanged)
+    Q_PROPERTY(QString typingText READ getTypingText NOTIFY typingTextChanged)
 public:
     MatrixCore(QObject* parent = nullptr);
 
@@ -43,6 +44,8 @@ public:
     Q_INVOKABLE void removeMessage(const QString& eventId);
 
     Q_INVOKABLE void startDirectChat(const QString& id);
+
+    Q_INVOKABLE void setTyping(Room* room);
 
     // room
     Q_INVOKABLE void joinRoom(const QString& id);
@@ -86,6 +89,8 @@ public:
 
     QVariantList getJoinedCommunitiesList() const;
 
+    QString getTypingText() const;
+
     EventModel eventModel;
     RoomListModel roomListModel, directoryListModel;
     RoomListSortModel roomListSortModel, directoryListSortModel;
@@ -106,6 +111,7 @@ signals:
     void displayNameChanged();
     void joinedCommunitiesChanged();
     void publicRoomsChanged();
+    void typingTextChanged();
 
 private:
     void consumeEvent(const QJsonObject& event, Room& room, const bool insertFront = true);
@@ -129,6 +135,8 @@ private:
     QMap<QString, Member*> idToMember;
     QMap<QString, Community*> idToCommunity;
     QMap<QString, Room*> idToRoom;
+
+    QString typingText;
 
     bool firstSync = true, traversingHistory = false;
 };

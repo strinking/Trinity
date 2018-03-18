@@ -552,6 +552,16 @@ Rectangle {
                     anchors.right: messageInput.right
                     anchors.rightMargin: 5
                 }
+
+                Text {
+                    id: typingLabel
+
+                    anchors.bottom: messageInputParent.bottom
+
+                    color: "white"
+
+                    text: matrix.typingText
+                }
             }
         }
 
@@ -716,6 +726,16 @@ Rectangle {
         interval: 60000
         running: true
         onTriggered: matrix.updateMembers(matrix.currentRoom)
+    }
+
+    Timer {
+        id: typingTimer
+        interval: 15000 //15 seconds
+        running: true
+        onTriggered: {
+            if(messageInput.text.length !== 0)
+                matrix.setTyping(matrix.currentRoom)
+        }
     }
 
     Connections {

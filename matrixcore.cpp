@@ -283,6 +283,40 @@ void MatrixCore::sync() {
                 roomListModel.updateRoom(roomState);
             }
 
+            for(const auto event : room.toObject()["ephemeral"].toObject()["events"].toArray()) {
+                const QString eventType = event.toObject()["type"].toString();
+
+                if(eventType == "m.typing") {
+                    auto typing = event.toObject()["content"].toObject()["user_ids"].toArray();
+
+                    QString typingText;
+                    int trueSize = 0;
+                    if(typing.size() < 4) {
+                        for(int i = 0; i < typing.size(); i++) {
+                            if(typing[i].toString() == userId)
+                                continue;
+
+                            typingText += resolveMemberId(typing[i].toString())->getDisplayName();
+                            if(i != typing.size() - 1)
+                                typingText += ", ";
+
+                            trueSize++;
+                        }
+
+                        typingText += " is";
+                    } else {
+                        typingText = "Several people are";
+                    }
+
+                    if(trueSize != 0)
+                        this->typingText = typingText + " typing...";
+                    else
+                        this->typingText.clear();
+
+                    emit typingTextChanged();
+                }
+            }
+
             for(const auto event : room.toObject()["timeline"].toObject()["events"].toArray())
                 consumeEvent(event.toObject(), *roomState);
 
@@ -373,6 +407,15 @@ void MatrixCore::startDirectChat(const QString& id) {
     };
 
     network::postJSON("/_matrix/client/r0/createRoom", roomObject, [](QNetworkReply*) {});
+}
+
+void MatrixCore::setTyping(Room* room) {
+    const QJsonObject typingObject {
+      {"typing", true},
+      {"timeout", 15000}
+    };
+
+    network::putJSON("/_matrix/client/r0/rooms/" + room->getId() + "/typing/" + userId, typingObject);
 }
 
 void MatrixCore::joinRoom(const QString& id) {
@@ -774,4 +817,8 @@ QVariantList MatrixCore::getJoinedCommunitiesList() const {
         list.push_back(QVariant::fromValue(community));
 
     return list;
+}
+
+QString MatrixCore::getTypingText() const {
+    return typingText;
 }
