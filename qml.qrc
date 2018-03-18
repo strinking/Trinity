@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Client.qml</file>
+        <file>main.qml</file>
+        <file>Login.qml</file>
+        <file>background.jpg</file>
+        <file>matrix-logo.png</file>
+        <file>Dialog.qml</file>
+        <file>ServerSelection.qml</file>
+        <file>AccountCreation.qml</file>
+        <file>Settings.qml</file>
+        <file>RoomSettings.qml</file>
+        <file>Profile.qml</file>
+        <file>Community.qml</file>
+        <file>placeholder.png</file>
+        <file>Communities.qml</file>
+    </qresource>
+</RCC>
