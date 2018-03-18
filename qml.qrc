@@ -15,5 +15,6 @@
         <file>placeholder.png</file>
         <file>Communities.qml</file>
         <file>Directory.qml</file>
+        <file>InviteDialog.qml</file>
     </qresource>
 </RCC>

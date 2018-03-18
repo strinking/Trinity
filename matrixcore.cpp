@@ -419,6 +419,14 @@ void MatrixCore::readMessageHistory(Room* room) {
     });
 }
 
+void MatrixCore::invite(Room* room, const QString& userId) {
+    const QJsonObject inviteObject {
+        {"user_id", userId}
+    };
+
+    network::postJSON("/_matrix/client/r0/rooms/" + room->getId() + "/invite", inviteObject, [](QNetworkReply*) {});
+}
+
 void MatrixCore::updateMemberCommunities(Member* member) {
     if(!member)
         return;

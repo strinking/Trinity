@@ -551,6 +551,24 @@ Rectangle {
                 flickableDirection: Flickable.VerticalFlick
             }
         }
+
+        Button {
+            id: inviteButton
+
+            width: memberList.width
+
+            anchors.bottom: memberList.bottom
+            anchors.right: memberList.right
+
+            text: "Invite to room"
+
+            onClicked: {
+                var popup = Qt.createComponent("qrc:/InviteDialog.qml")
+                var popupContainer = popup.createObject(window, {"parent": window})
+
+                popupContainer.open()
+            }
+        }
     }
 
     Timer {

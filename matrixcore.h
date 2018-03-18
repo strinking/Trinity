@@ -47,6 +47,8 @@ public:
     Q_INVOKABLE void updateMembers(Room* room);
     Q_INVOKABLE void readMessageHistory(Room* room);
 
+    Q_INVOKABLE void invite(Room* room, const QString& userId);
+
     // member
     Q_INVOKABLE void updateMemberCommunities(Member* member);
 
