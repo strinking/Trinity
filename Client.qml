@@ -85,7 +85,7 @@ Rectangle {
                 anchors.left: roomAvatar.right
                 anchors.leftMargin: 5
 
-                color: selected ? "black" : "white"
+                color: selected ? "black" : (highlightCount > 0 ? "red" : (notificationCount > 0 ? "blue" : "white"))
             }
 
             MouseArea {

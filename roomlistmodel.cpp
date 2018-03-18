@@ -17,8 +17,12 @@ QVariant RoomListModel::data(const QModelIndex &index, int role) const {
         return rooms[index.row()]->getJoinState();
     else if(role == TopicRole)
         return rooms[index.row()]->getTopic();
-    else
+    else if(role == IdRole)
         return rooms[index.row()]->getId();
+    else if(role == HighlightCountRole)
+        return rooms[index.row()]->getHighlightCount();
+    else
+        return rooms[index.row()]->getNotificationCount();
 }
 
 QHash<int, QByteArray> RoomListModel::roleNames() const {
@@ -28,6 +32,8 @@ QHash<int, QByteArray> RoomListModel::roleNames() const {
     roles[JoinStateRole] = "joinState";
     roles[TopicRole] = "topic";
     roles[IdRole] = "id";
+    roles[HighlightCountRole] = "highlightCount";
+    roles[NotificationCountRole] = "notificationCount";
 
     return roles;
 }

@@ -13,7 +13,9 @@ public:
         AvatarRole,
         JoinStateRole,
         TopicRole,
-        IdRole
+        IdRole,
+        HighlightCountRole,
+        NotificationCountRole
     };
 
     RoomListModel(QList<Room*>& rooms);

@@ -261,6 +261,11 @@ void MatrixCore::sync() {
             if(firstSync)
                 roomState->prevBatch = room.toObject()["timeline"].toObject()["prev_batch"].toString();
 
+            roomState->setHighlightCount(room.toObject()["unread_notifications"].toObject()["highlight_count"].toInt());
+            roomState->setNotificationCount(room.toObject()["unread_notifications"].toObject()["notification_count"].toInt());
+
+            roomListModel.updateRoom(roomState);
+
             for(const auto event : room.toObject()["timeline"].toObject()["events"].toArray())
                 consumeEvent(event.toObject(), *roomState);
 
@@ -303,6 +308,7 @@ void MatrixCore::sendMessage(Room* room, const QString& message) {
     e->setSender(userId);
     e->timestamp = QDateTime::currentDateTime();
     e->setMsg(message);
+    e->setRoom(room->getId());
     e->sent = false;
 
     eventModel.beginUpdate(0);
@@ -518,7 +524,7 @@ void MatrixCore::changeCurrentRoom(Room* room) {
 }
 
 void MatrixCore::changeCurrentRoom(const unsigned int index) {
-    if(index <= rooms.size())
+    if(index < rooms.size())
         changeCurrentRoom(rooms[index]);
     else
         changeCurrentRoom(&emptyRoom);
@@ -616,20 +622,28 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
 
     const auto addEvent = [&room, insertFront, this](Event* object) {
         if(insertFront) {
-            eventModel.beginUpdate(0);
+            if(&room == currentRoom)
+                eventModel.beginUpdate(0);
+
             room.events.push_front(object);
-            eventModel.endHistory();
+
+            if(&room == currentRoom)
+                eventModel.endHistory();
         } else {
-            eventModel.beginHistory(0);
+            if(&room == currentRoom)
+                eventModel.beginHistory(0);
+
             room.events.push_back(object);
-            eventModel.endHistory();
+
+            if(&room == currentRoom)
+                eventModel.endHistory();
         }
     };
 
     bool found = false;
     if(eventType == "m.room.message") {
         for(size_t i = 0; i < unsentMessages.size(); i++) {
-            if(event["sender"].toString() == userId) {
+            if(event["sender"].toString() == userId && unsentMessages[i]->getRoom() == room.getId()) {
                 found = true;
                 eventModel.updateEvent(unsentMessages[i]);
                 unsentMessages.removeAt(i);

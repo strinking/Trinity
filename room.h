@@ -22,6 +22,10 @@ public:
         emit msgChanged();
     }
 
+    void setRoom(const QString& room) {
+        this->room = room;
+    }
+
     QString getSender() const {
         return sender;
     }
@@ -30,12 +34,17 @@ public:
         return msg;
     }
 
+    QString getRoom() const {
+        return room;
+    }
+
     QString eventId;
     QDateTime timestamp;
     bool sent = true;
 
 private:
     QString sender, msg;
+    QString room;
 
 signals:
     void senderChanged();
@@ -115,6 +124,8 @@ class Room : public QObject
     Q_PROPERTY(QString joinState MEMBER joinState NOTIFY joinStateChanged)
     Q_PROPERTY(bool guestDenied MEMBER guestDenied NOTIFY guestDeniedChanged)
     Q_PROPERTY(QString invitedBy MEMBER invitedBy NOTIFY invitedByChanged)
+    Q_PROPERTY(QString highlightCount READ getHighlightCount NOTIFY highlightCountChanged)
+    Q_PROPERTY(QString notificationCount READ getNotificationCount NOTIFY notificationCountChanged)
 public:
     void setId(const QString& id) {
         this->id = id;
@@ -151,6 +162,16 @@ public:
         emit invitedByChanged();
     }
 
+    void setHighlightCount(const unsigned int num) {
+        highlightCount = num;
+        emit highlightCountChanged();
+    }
+
+    void setNotificationCount(const unsigned int num) {
+        notificationCount = num;
+        emit notificationCountChanged();
+    }
+
     QString getId() const {
         return id;
     }
@@ -171,6 +192,14 @@ public:
         return joinState;
     }
 
+    unsigned int getHighlightCount() const {
+        return highlightCount;
+    }
+
+    unsigned int getNotificationCount() const {
+        return notificationCount;
+    }
+
     QList<Event*> events;
     QString prevBatch;
 
@@ -183,6 +212,7 @@ private:
     QString joinState;
     bool guestDenied = false;
     QString invitedBy;
+    unsigned int highlightCount = 0, notificationCount = 0;
 
 signals:
     void idChanged();
@@ -192,4 +222,6 @@ signals:
     void joinStateChanged();
     void guestDeniedChanged();
     void invitedByChanged();
+    void highlightCountChanged();
+    void notificationCountChanged();
 };
