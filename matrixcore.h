@@ -71,6 +71,8 @@ public:
 
     Q_INVOKABLE void loadDirectory();
 
+    Q_INVOKABLE void readUpTo(Room* room, const int index);
+
     Room* getCurrentRoom();
 
     EventModel* getEventModel();

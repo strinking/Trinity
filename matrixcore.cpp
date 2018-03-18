@@ -261,10 +261,18 @@ void MatrixCore::sync() {
             if(firstSync)
                 roomState->prevBatch = room.toObject()["timeline"].toObject()["prev_batch"].toString();
 
-            roomState->setHighlightCount(room.toObject()["unread_notifications"].toObject()["highlight_count"].toInt());
-            roomState->setNotificationCount(room.toObject()["unread_notifications"].toObject()["notification_count"].toInt());
+            const int highlightCount = room.toObject()["unread_notifications"].toObject()["highlight_count"].toInt();
+            const int notificationCount = room.toObject()["unread_notifications"].toObject()["notification_count"].toInt();
 
-            roomListModel.updateRoom(roomState);
+            if(highlightCount != roomState->getHighlightCount()) {
+                roomState->setNotificationCount(highlightCount);
+                roomListModel.updateRoom(roomState);
+            }
+
+            if(notificationCount != roomState->getNotificationCount()) {
+                roomState->setNotificationCount(notificationCount);
+                roomListModel.updateRoom(roomState);
+            }
 
             for(const auto event : room.toObject()["timeline"].toObject()["events"].toArray())
                 consumeEvent(event.toObject(), *roomState);
@@ -591,6 +599,19 @@ void MatrixCore::loadDirectory() {
             }
         }
     });
+}
+
+void MatrixCore::readUpTo(Room* room, const int index) {
+    if(!room)
+        return;
+
+    if(room->events.size() == 0)
+        return;
+
+    if(index < 0)
+        return;
+
+    network::post("/_matrix/client/r0/rooms/" + room->getId() + "/receipt/m.read/" + room->events[index]->eventId);
 }
 
 Room* MatrixCore::getCurrentRoom() {

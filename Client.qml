@@ -421,13 +421,20 @@ Rectangle {
                     verticalLayoutDirection: ListView.BottomToTop
 
                     onMovingVerticallyChanged: {
+                        if(verticalVelocity < 0)
+                           matrix.readMessageHistory(matrix.currentRoom)
+                    }
 
-                        var curVelocity = verticalVelocity // Snapshot the current speed
-                        if( curVelocity < 0 )
-                        {
-                            if(matrix.currentRoom)
-                                   matrix.readMessageHistory(matrix.currentRoom)
-                        }
+                    // we scrolled
+                    onContentYChanged: {
+                        var index = indexAt(0, contentY + height - 5)
+                        matrix.readUpTo(matrix.currentRoom, index)
+                    }
+
+                    // a new message was added
+                    onContentHeightChanged: {
+                        var index = indexAt(0, contentY + height - 5)
+                        matrix.readUpTo(matrix.currentRoom, index)
                     }
                 }
 
