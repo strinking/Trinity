@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
     qmlRegisterUncreatableType<Desktop>("trinity.platform.desktop", 1, 0, "Desktop", "");
 
     QQmlApplicationEngine engine;
-    QQmlContext* context = new QQmlContext(engine.rootContext());
+    QQmlContext* context = new QQmlContext(engine.rootContext(), &engine);
 
     MatrixCore matrix;
     Desktop desktop;

@@ -14,6 +14,8 @@ class Community : public QObject
     Q_PROPERTY(QString longDescription READ getLongDescription NOTIFY longDescriptionChanged)
     Q_PROPERTY(QString joinState READ getJoinState NOTIFY joinStateChanged)
 public:
+    Community(QObject* parent = nullptr) : QObject(parent) {}
+
     void setId(const QString& id) {
         this->id = id;
         emit idChanged();

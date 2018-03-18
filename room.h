@@ -12,6 +12,8 @@ class Event : public QObject
     Q_PROPERTY(QString sender READ getSender NOTIFY senderChanged)
     Q_PROPERTY(QString msg READ getMsg NOTIFY msgChanged)
 public:
+    Event(QObject* parent = nullptr) : QObject(parent) {}
+
     void setSender(const QString& id) {
         sender = id;
         emit senderChanged();
@@ -58,6 +60,8 @@ class Member : public QObject {
     Q_PROPERTY(QString avatarURL READ getAvatar NOTIFY avatarChanged)
     Q_PROPERTY(QVariantList publicCommunities READ getPublicCommunitiesList NOTIFY publicCommunitiesChanged)
 public:
+    Member(QObject* parent = nullptr) : QObject(parent) {}
+
     void setId(const QString& id) {
         this->id = id;
         emit idChanged();
@@ -128,6 +132,8 @@ class Room : public QObject
     Q_PROPERTY(QString notificationCount READ getNotificationCount NOTIFY notificationCountChanged)
     Q_PROPERTY(bool direct MEMBER direct)
 public:
+    Room(QObject* parent = nullptr) : QObject(parent) {}
+
     void setId(const QString& id) {
         this->id = id;
         emit idChanged();

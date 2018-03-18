@@ -159,7 +159,7 @@ void MatrixCore::sync() {
         const auto createRoom = [this](const QString id, const QString joinState) {
             roomListModel.beginInsertRoom();
 
-            Room* room = new Room();
+            Room* room = new Room(this);
             room->setId(id);
             room->setJoinState(joinState);
 
@@ -480,7 +480,7 @@ void MatrixCore::updateMembers(Room* room) {
 
                     Member* m = nullptr;
                     if(!idToMember.contains(id)) {
-                        m = new Member();
+                        m = new Member(this);
                         m->setId(id);
                         m->setDisplayName(memberJson["content"].toObject()["displayname"].toString());
 
@@ -763,7 +763,7 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
         if(msgType != "m.text")
             return;
 
-        Event* e = new Event();
+        Event* e = new Event(&room);
 
         e->timestamp = QDateTime(QDate::currentDate(),
                                  QTime(QTime::currentTime().hour(),
@@ -783,7 +783,7 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
 }
 
 Community* MatrixCore::createCommunity(const QString& id) {
-    Community* community = new Community();
+    Community* community = new Community(this);
     community->setId(id);
 
     network::get("/_matrix/client/r0/groups/" + community->getId() + "/summary", [this, community](QNetworkReply* reply) {
