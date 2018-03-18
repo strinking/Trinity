@@ -14,5 +14,6 @@
         <file>Community.qml</file>
         <file>placeholder.png</file>
         <file>Communities.qml</file>
+        <file>Directory.qml</file>
     </qresource>
 </RCC>

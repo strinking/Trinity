@@ -294,8 +294,8 @@ Rectangle {
                     anchors.fill: parent
 
                     delegate: Rectangle {                        
-                        width: client.width
-                        height: condense ? 25 : 50
+                        width: parent.width
+                        height: (condense ? 5 : 25) + message.contentHeight
 
                         color: "transparent"
 
@@ -350,13 +350,19 @@ Rectangle {
                         }
 
                         Text {
+                            id: message
+
                             y: condense ? 0 : 20
                             text: msg
+
+                            width: parent.width
+
+                            wrapMode: Text.Wrap
 
                             color: sent ? "white" : "gray"
 
                             anchors.left: condense ? parent.left : avatar.right
-                            anchors.leftMargin: condense ? 50 : 10
+                            anchors.leftMargin: condense ? 45 : 10
                         }
 
                         MouseArea {
