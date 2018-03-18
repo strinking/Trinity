@@ -36,6 +36,8 @@ Rectangle {
 
             model: matrix.publicRooms
 
+            clip: true
+
             delegate: Rectangle {
                 width: parent.width
                 height: 40 + roomTopic.contentHeight

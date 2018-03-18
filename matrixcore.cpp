@@ -551,33 +551,38 @@ void MatrixCore::loadDirectory() {
     network::postJSON("/_matrix/client/r0/publicRooms", bodyObject, [this](QNetworkReply* reply) {
         const QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
 
-        for(const auto room : document.object()["chunk"].toArray()) {
-            const QJsonObject& roomObject = room.toObject();
-            const QString& roomId = roomObject["room_id"].toString();
+        if(publicRooms.size() != document.object()["chunk"].toArray().size()) {
+            publicRooms.clear();
+            publicRooms.reserve(document.object()["chunk"].toArray().size());
 
-            Room* r = nullptr;
-            if(!idToRoom.contains(roomId)) {
-                r = new Room();
-                r->setId(roomId);
-                r->setName(roomObject["name"].toString());
+            for(const auto room : document.object()["chunk"].toArray()) {
+                const QJsonObject& roomObject = room.toObject();
+                const QString& roomId = roomObject["room_id"].toString();
 
-                if(!roomObject["avatar_url"].isNull()) {
-                    const QString imageId = roomObject["avatar_url"].toString().remove("mxc://");
-                    r->setAvatar(network::homeserverURL + "/_matrix/media/r0/thumbnail/" + imageId + "?width=64&height=64&method=scale");
+                Room* r = nullptr;
+                if(!idToRoom.contains(roomId)) {
+                    r = new Room();
+                    r->setId(roomId);
+                    r->setName(roomObject["name"].toString());
+
+                    if(!roomObject["avatar_url"].isNull()) {
+                        const QString imageId = roomObject["avatar_url"].toString().remove("mxc://");
+                        r->setAvatar(network::homeserverURL + "/_matrix/media/r0/thumbnail/" + imageId + "?width=64&height=64&method=scale");
+                    }
+
+                    r->setTopic(roomObject["topic"].toString());
+
+                    idToRoom.insert(roomId, r);
+                } else {
+                    r = idToRoom.value(roomId);
                 }
 
-                r->setTopic(roomObject["topic"].toString());
+                directoryListModel.beginInsertRoom();
+                publicRooms.push_back(r);
+                directoryListModel.endInsertRoom();
 
-                idToRoom.insert(roomId, r);
-            } else {
-                r = idToRoom.value(roomId);
+                emit publicRoomsChanged();
             }
-
-            directoryListModel.beginInsertRoom();
-            publicRooms.push_back(r);
-            directoryListModel.endInsertRoom();
-
-            emit publicRoomsChanged();
         }
     });
 }
