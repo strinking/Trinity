@@ -248,13 +248,6 @@ void MatrixCore::sync() {
             if(firstSync)
                 roomState->prevBatch = room.toObject()["timeline"].toObject()["prev_batch"].toString();
 
-            if(!currentRoom) {
-                currentRoom = rooms[0];
-                eventModel.setRoom(roomState);
-                memberModel.setRoom(roomState);
-                emit currentRoomChanged();
-            }
-
             for(const auto event : room.toObject()["timeline"].toObject()["events"].toArray())
                 consumeEvent(event.toObject(), *roomState);
 
@@ -278,8 +271,10 @@ void MatrixCore::sync() {
             }
         }
 
-        if(firstSync)
+        if(firstSync) {
             firstSync = false;
+            emit initialSyncFinished();
+        }
 
         emit syncFinished();
     });
@@ -396,6 +391,8 @@ void MatrixCore::updateMembers(Room* room) {
                     } else {
                         m = idToMember[id];
                     }
+
+                    eventModel.updateEventsByMember(id);
 
                     memberModel.beginUpdate(0);
 

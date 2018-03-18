@@ -72,14 +72,28 @@ void EventModel::beginUpdate(const unsigned int num) {
 }
 
 void EventModel::beginHistory(int size) {
-    beginInsertRows(QModelIndex(), room->events.size(), room->events.size() + size);
+    if(room)
+        beginInsertRows(QModelIndex(), room->events.size(), room->events.size() + size);
 }
 
 void EventModel::updateEvent(const Event* event) {
+    if(!room)
+        return;
+
     for(size_t i = 0; i < room->events.size(); i++) {
         if(room->events[i] == event) {
             emit dataChanged(createIndex(i, 0), createIndex(i, 0));
             return;
         }
+    }
+}
+
+void EventModel::updateEventsByMember(const QString& id) {
+    if(!room)
+        return;
+
+    for(size_t i = 0; i < room->events.size(); i++) {
+        if(room->events[i]->getSender() == id)
+            emit dataChanged(createIndex(i, 0), createIndex(i, 0));
     }
 }

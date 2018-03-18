@@ -90,6 +90,7 @@ signals:
     void registerFlow(QJsonObject data);
     void loginAttempt(bool error, QString description);
     void syncFinished();
+    void initialSyncFinished();
     void currentRoomChanged();
     void roomListChanged();
     void message(QString content);

@@ -577,6 +577,10 @@ Rectangle {
                 messages.positionViewAtEnd()
         }
 
+        onInitialSyncFinished: {
+            matrix.changeCurrentRoom(0)
+        }
+
         onCurrentRoomChanged: {
             matrix.readMessageHistory(matrix.currentRoom)
             matrix.updateMembers(matrix.currentRoom)

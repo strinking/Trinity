@@ -37,7 +37,8 @@ public:
     void beginHistory(int size);
 
     void endHistory() {
-        endInsertRows();
+        if(room)
+            endInsertRows();
     }
 
     void setRoom(Room* room);
@@ -55,6 +56,7 @@ public:
     }
 
     void updateEvent(const Event* event);
+    void updateEventsByMember(const QString& id);
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
