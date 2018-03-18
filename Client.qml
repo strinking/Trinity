@@ -308,7 +308,7 @@ Rectangle {
             anchors.top: roomHeader.bottom
 
             Rectangle {
-                height: parent.height - messageInput.height
+                height: parent.height - messageInputParent.height
                 width: parent.width
 
                 clip: true
@@ -449,8 +449,6 @@ Rectangle {
 
                     visible: matrix.currentRoom.guestDenied
 
-                    color: "transparent"
-
                     Text {
                         id: invitedByLabel
 
@@ -474,15 +472,32 @@ Rectangle {
             }
 
             Rectangle {
+                id: messageInputParent
+
                 anchors.top: messages.parent.bottom
 
                 width: parent.width
-                height: 50
+                height: 40
+
+                color: Qt.rgba(0.1, 0.1, 0.1, 1.0)
 
                 TextArea {
                     id: messageInput
-                    width: parent.width
-                    height: 50
+
+                    width: parent.width - 10
+                    height: parent.height - 10
+
+                    anchors.top: parent.top
+                    anchors.topMargin: 5
+
+                    anchors.left: parent.left
+                    anchors.leftMargin: 5
+
+                    anchors.right: parent.right
+                    anchors.rightMargin: 5
+
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 5
 
                     Keys.onReturnPressed: {
                         if(event.modifiers & Qt.ShiftModifier) {
