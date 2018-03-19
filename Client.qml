@@ -294,6 +294,9 @@ Rectangle {
                 ToolTip.visible: hovered
                 ToolTip.text: "Member List"
 
+                background: Rectangle { color: "transparent" }
+                contentItem: Rectangle { color: "transparent" }
+
                 Image {
                     id: memberListButtonImage
 
@@ -328,6 +331,9 @@ Rectangle {
 
                 ToolTip.visible: hovered
                 ToolTip.text: "Settings"
+
+                background: Rectangle { color: "transparent" }
+                contentItem: Rectangle { color: "transparent" }
 
                 Image {
                     id: settingsButtonImage
