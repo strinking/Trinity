@@ -18,20 +18,38 @@ Rectangle {
 
         color: "transparent"
 
-        Button {
+        BackButton {
             id: backButton
 
-            text: "Back"
+            anchors.top: parent.top
+            anchors.topMargin: 15
 
-            onClicked: stack.pop()
+            anchors.right: parent.right
+        }
+
+        Text {
+            id: communitiesLabel
+
+            anchors.top: parent.top
+            anchors.topMargin: 15
+
+            text: "Communities"
+
+            font.pointSize: 25
+            font.bold: true
+
+            color: "white"
         }
 
         Text {
             id: joinedCommunitiesLabel
 
-            anchors.top: backButton.bottom
+            anchors.top: communitiesLabel.bottom
+            anchors.topMargin: 10
 
             text: "Joined Communities"
+
+            color: "white"
         }
 
         ListView {
