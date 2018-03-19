@@ -746,9 +746,9 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
             return;
 
         if(event["content"].toObject().contains("is_direct"))
-            room.direct = event["content"].toObject()["is_direct"].toBool();
+            room.setDirect(event["content"].toObject()["is_direct"].toBool());
 
-        if(room.direct) {
+        if(room.getDirect()) {
             room.setName(event["content"].toObject()["displayname"].toString());
 
             if(!event["content"].toObject()["avatar_url"].isNull()) {

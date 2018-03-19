@@ -24,9 +24,9 @@ QVariant RoomListModel::data(const QModelIndex &index, int role) const {
     else if(role == NotificationCountRole)
         return rooms[index.row()]->getNotificationCount();
     else if(role == DirectRole)
-        return rooms[index.row()]->direct;
+        return rooms[index.row()]->getDirect();
     else {
-        if(rooms[index.row()]->direct)
+        if(rooms[index.row()]->getDirect())
             return "Direct Chats";
         else
             return rooms[index.row()]->getJoinState();

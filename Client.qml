@@ -297,6 +297,8 @@ Rectangle {
                 background: Rectangle { color: "transparent" }
                 contentItem: Rectangle { color: "transparent" }
 
+                visible: !matrix.currentRoom.direct
+
                 Image {
                     id: memberListButtonImage
 

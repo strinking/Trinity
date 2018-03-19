@@ -130,7 +130,7 @@ class Room : public QObject
     Q_PROPERTY(QString invitedBy MEMBER invitedBy NOTIFY invitedByChanged)
     Q_PROPERTY(QString highlightCount READ getHighlightCount NOTIFY highlightCountChanged)
     Q_PROPERTY(QString notificationCount READ getNotificationCount NOTIFY notificationCountChanged)
-    Q_PROPERTY(bool direct MEMBER direct)
+    Q_PROPERTY(bool direct READ getDirect NOTIFY directChanged)
 public:
     Room(QObject* parent = nullptr) : QObject(parent) {}
 
@@ -179,6 +179,11 @@ public:
         emit notificationCountChanged();
     }
 
+    void setDirect(const bool direct) {
+        this->direct = direct;
+        emit directChanged();
+    }
+
     QString getId() const {
         return id;
     }
@@ -207,12 +212,14 @@ public:
         return notificationCount;
     }
 
+    bool getDirect() const {
+        return direct;
+    }
+
     QList<Event*> events;
     QString prevBatch;
 
     QList<Member*> members;
-
-    bool direct = false;
 
 private:
     QString id, name, topic, avatar;
@@ -220,6 +227,7 @@ private:
     bool guestDenied = false;
     QString invitedBy;
     unsigned int highlightCount = 0, notificationCount = 0;
+    bool direct = false;
 
 signals:
     void idChanged();
@@ -231,4 +239,5 @@ signals:
     void invitedByChanged();
     void highlightCountChanged();
     void notificationCountChanged();
+    void directChanged();
 };
