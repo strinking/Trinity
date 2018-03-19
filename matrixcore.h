@@ -24,6 +24,7 @@ class MatrixCore : public QObject
     Q_PROPERTY(QVariantList joinedCommunities READ getJoinedCommunitiesList NOTIFY joinedCommunitiesChanged)
     Q_PROPERTY(RoomListSortModel* publicRooms READ getDirectoryListModel NOTIFY publicRoomsChanged)
     Q_PROPERTY(QString typingText READ getTypingText NOTIFY typingTextChanged)
+    Q_PROPERTY(bool markdownEnabled READ getMarkdownEnabled WRITE setMarkdownEnabled NOTIFY markdownEnabledChanged)
 public:
     MatrixCore(QObject* parent = nullptr);
 
@@ -78,6 +79,8 @@ public:
 
     Q_INVOKABLE void readUpTo(Room* room, const int index);
 
+    void setMarkdownEnabled(const bool enabled);
+
     Room* getCurrentRoom();
 
     EventModel* getEventModel();
@@ -90,6 +93,8 @@ public:
     QVariantList getJoinedCommunitiesList() const;
 
     QString getTypingText() const;
+
+    bool getMarkdownEnabled() const;
 
     EventModel eventModel;
     RoomListModel roomListModel, directoryListModel;
@@ -112,6 +117,7 @@ signals:
     void joinedCommunitiesChanged();
     void publicRoomsChanged();
     void typingTextChanged();
+    void markdownEnabledChanged();
 
 private:
     void consumeEvent(const QJsonObject& event, Room& room, const bool insertFront = true);
@@ -139,4 +145,5 @@ private:
     QString typingText;
 
     bool firstSync = true, traversingHistory = false;
+    bool markdownEnabled = true;
 };

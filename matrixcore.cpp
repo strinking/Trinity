@@ -1,5 +1,7 @@
 #include "matrixcore.h"
 
+#include <cmark.h>
+
 #include <QJsonArray>
 #include <QRandomGenerator>
 #include <QSettings>
@@ -352,10 +354,8 @@ void MatrixCore::sync() {
 }
 
 void MatrixCore::sendMessage(Room* room, const QString& message) {
-    const QJsonObject messageObject {
-        {"msgtype", "m.text"},
-        {"body", message}
-    };
+    if(message.isEmpty())
+        return;
 
     Event* e = new Event(room);
     e->setSender(userId);
@@ -370,14 +370,45 @@ void MatrixCore::sendMessage(Room* room, const QString& message) {
 
     unsentMessages.push_back(e);
 
-    network::putJSON(QString("/_matrix/client/r0/rooms/" + room->getId() + "/send/m.room.message/") + QRandomGenerator::global()->generate(), messageObject, [this, e](QNetworkReply* reply) {
+    const auto onMessageFeedbackReceived = [this, e](QNetworkReply* reply) {
         if(!reply->error()) {
             for(size_t i = 0; i < unsentMessages.size(); i++) {
                 if(unsentMessages[i] == e)
                     e->sent = true;
             }
+        } else {
+            qDebug() << reply->readAll();
         }
-    });
+    };
+
+    bool shouldSendAsMarkdown = false;
+    char* formatted = nullptr;
+
+    if(markdownEnabled) {
+        formatted = cmark_markdown_to_html(message.toStdString().c_str(), message.length(), CMARK_OPT_DEFAULT | CMARK_OPT_HARDBREAKS);
+
+        shouldSendAsMarkdown = strlen(formatted) > 8 + message.length();
+    }
+
+    if(shouldSendAsMarkdown) {
+        const QJsonObject messageObject {
+            {"msgtype", "m.text"},
+            {"formatted_body", formatted},
+            {"body", message},
+            {"format", "org.matrix.custom.html"}
+        };
+
+        e->setMsg(formatted);
+
+        network::putJSON("/_matrix/client/r0/rooms/" + room->getId()  + "/send/m.room.message/" + QRandomGenerator::global()->generate(), messageObject, onMessageFeedbackReceived);
+    } else {
+        const QJsonObject messageObject {
+            {"msgtype", "m.text"},
+            {"body", message}
+        };
+
+        network::putJSON(QString("/_matrix/client/r0/rooms/" + room->getId() + "/send/m.room.message/") + QRandomGenerator::global()->generate(), messageObject, onMessageFeedbackReceived);
+    }
 }
 
 void MatrixCore::removeMessage(const QString& eventId) {
@@ -682,6 +713,11 @@ void MatrixCore::readUpTo(Room* room, const int index) {
     network::post("/_matrix/client/r0/rooms/" + room->getId() + "/receipt/m.read/" + room->events[index]->eventId);
 }
 
+void MatrixCore::setMarkdownEnabled(const bool enabled) {
+    markdownEnabled = enabled;
+    emit markdownEnabledChanged();
+}
+
 Room* MatrixCore::getCurrentRoom() {
     return currentRoom != nullptr ? currentRoom : &emptyRoom;
 }
@@ -767,8 +803,6 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
 
     if(!found && eventType == "m.room.message") {
         const QString msgType = event["content"].toObject()["msgtype"].toString();
-        if(msgType != "m.text")
-            return;
 
         Event* e = new Event(&room);
 
@@ -780,7 +814,15 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
 
         e->setSender(event["sender"].toString());
         e->eventId = event["event_id"].toString();
-        e->setMsg(event["content"].toObject()["body"].toString());
+
+        if(msgType == "m.text" && !event["content"].toObject().contains("formatted_body")) {
+            e->setMsg(event["content"].toObject()["body"].toString());
+        } else if(msgType == "m.text" && event["content"].toObject().contains("formatted_body")) {
+            e->setMsg(event["content"].toObject()["formatted_body"].toString());
+        } else {
+            delete e;
+            return;
+        }
 
         addEvent(e);
 
@@ -828,4 +870,8 @@ QVariantList MatrixCore::getJoinedCommunitiesList() const {
 
 QString MatrixCore::getTypingText() const {
     return typingText;
+}
+
+bool MatrixCore::getMarkdownEnabled() const {
+    return markdownEnabled;
 }

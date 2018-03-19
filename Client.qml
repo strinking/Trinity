@@ -459,6 +459,7 @@ Rectangle {
                             width: parent.width
 
                             wrapMode: Text.Wrap
+                            textFormat: Text.RichText
 
                             readOnly: true
                             selectByMouse: true
@@ -630,8 +631,10 @@ Rectangle {
                     anchors.right: emojiButton.left
                     anchors.rightMargin: 5
 
-                    ToolTip.text: "Markdown is disabled"
+                    ToolTip.text: "Markdown is " + (matrix.markdownEnabled ? "enabled" : "disabled")
                     ToolTip.visible: hovered
+
+                    onReleased: matrix.markdownEnabled = !matrix.markdownEnabled
                 }
 
                 ToolButton {

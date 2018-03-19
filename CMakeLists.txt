@@ -28,6 +28,6 @@ add_executable(${PROJECT_NAME}
     roomlistsortmodel.cpp
     roomlistsortmodel.h)
 
-target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Quick Qt5::Widgets)
+target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Quick Qt5::Widgets cmark)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
