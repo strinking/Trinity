@@ -584,8 +584,8 @@ Rectangle {
                     width: parent.width - attachButton.width - 10
                     height: 30
 
-                    anchors.top: parent.top
-                    anchors.topMargin: 5
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 20
 
                     anchors.left: attachButton.right
                     anchors.leftMargin: 5
@@ -599,9 +599,15 @@ Rectangle {
                         if(event.modifiers & Qt.ShiftModifier) {
                             event.accepted = false
                         } else {
+                            event.accepted = true
                             matrix.sendMessage(matrix.currentRoom, text)
                             clear()
                         }
+                    }
+
+                    onTextChanged: {
+                        height = Math.max(30, contentHeight + 13)
+                        parent.height = Math.max(55, contentHeight + 20)
                     }
                 }
 
