@@ -272,6 +272,8 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
 
+                    cursorShape: Qt.PointingHandCursor
+
                     onReleased: showDialog(matrix.currentRoom.name, matrix.currentRoom.topic)
                 }
 
@@ -576,6 +578,9 @@ Rectangle {
 
                     anchors.left: parent.left
                     anchors.leftMargin: 5
+
+                    ToolTip.text: "Attach File"
+                    ToolTip.visible: hovered
                 }
 
                 TextArea {
@@ -624,6 +629,9 @@ Rectangle {
 
                     anchors.right: emojiButton.left
                     anchors.rightMargin: 5
+
+                    ToolTip.text: "Markdown is disabled"
+                    ToolTip.visible: hovered
                 }
 
                 ToolButton {
@@ -639,6 +647,9 @@ Rectangle {
 
                     anchors.right: messageInput.right
                     anchors.rightMargin: 5
+
+                    ToolTip.text: "Add emoji"
+                    ToolTip.visible: hovered
                 }
 
                 Text {
