@@ -481,13 +481,19 @@ Rectangle {
                             MenuItem {
                                 text: "Remove"
 
-                                onClicked: matrix.removeMessage(eventId)
+                                onReleased: matrix.removeMessage(eventId)
                             }
 
                             MenuItem {
                                 text: "Permalink"
 
-                                onClicked: Qt.openUrlExternally("https://matrix.to/#/" + matrix.currentRoom.id + "/" + eventId)
+                                onReleased: Qt.openUrlExternally("https://matrix.to/#/" + matrix.currentRoom.id + "/" + eventId)
+                            }
+
+                            MenuItem {
+                                text: "Quote"
+
+                                onReleased: messageInput.append("> " + msg + "\n\n")
                             }
                         }
                     }
