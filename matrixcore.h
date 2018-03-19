@@ -111,7 +111,7 @@ signals:
     void initialSyncFinished();
     void currentRoomChanged();
     void roomListChanged();
-    void message(QString sender, QString content);
+    void message(Room* room, QString sender, QString content);
     void homeserverChanged(bool valid, QString description);
     void displayNameChanged();
     void joinedCommunitiesChanged();

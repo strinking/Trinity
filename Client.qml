@@ -120,9 +120,60 @@ Rectangle {
                 id: contextMenu
 
                 MenuItem {
-                    text: "Settings"
+                    text: "Mark As Read"
 
-                    onClicked: stack.push("qrc:/RoomSettings.qml", {"room": matrix.getRoom(index)})
+                    onReleased: matrix.readUpTo(matrix.getRoom(matrix.roomListModel.getOriginalIndex(index)), 0)
+                }
+
+                MenuSeparator {}
+
+                GroupBox {
+                    title: "Notification Settings"
+
+                    Column {
+                        spacing: 10
+
+                        RadioButton {
+                            text: "All messages"
+
+                            ToolTip.text: "Recieve a notification for all messages in this room."
+                            ToolTip.visible: hovered
+
+                            onReleased: matrix.getRoom(matrix.roomListModel.getOriginalIndex(index)).notificationLevel = 2
+
+                            checked: matrix.getRoom(matrix.roomListModel.getOriginalIndex(index)).notificationLevel === 2
+                        }
+
+                        RadioButton {
+                            text: "Only Mentions"
+
+                            ToolTip.text: "Recieve a notification for mentions in this room."
+                            ToolTip.visible: hovered
+
+                            onReleased: matrix.getRoom(matrix.roomListModel.getOriginalIndex(index)).notificationLevel = 1
+
+                            checked: matrix.getRoom(matrix.roomListModel.getOriginalIndex(index)).notificationLevel === 1
+                        }
+
+                        RadioButton {
+                            text: "Mute"
+
+                            ToolTip.text: "Don't get notifications or unread indicators for this room."
+                            ToolTip.visible: hovered
+
+                            onReleased: matrix.getRoom(matrix.roomListModel.getOriginalIndex(index)).notificationLevel = 0
+
+                            checked: matrix.getRoom(matrix.roomListModel.getOriginalIndex(index)).notificationLevel === 3
+                        }
+                    }
+                }
+
+                MenuSeparator {}
+
+                MenuItem {
+                    text: "Room Settings"
+
+                    onReleased: stack.push("qrc:/RoomSettings.qml", {"room": matrix.getRoom(matrix.roomListModel.getOriginalIndex(index))})
                 }
 
                 MenuSeparator {}
@@ -820,10 +871,7 @@ Rectangle {
         interval: 1500
         running: true
         onTriggered: {
-            if(messages.contentY == messages.contentHeight - messages.height)
-                shouldScroll = true
-            else
-                shouldScroll = false
+            shouldScroll = messages.contentY == messages.contentHeight - messages.height
 
             matrix.sync()
         }
@@ -863,8 +911,18 @@ Rectangle {
         }
 
         onMessage: {
-            if(content.includes(matrix.displayName))
-                desktop.showMessage(matrix.resolveMemberId(sender).displayName, content)
+            var notificationLevel = room.notificationLevel
+            var shouldDisplay = false
+
+            if(notificationLevel === 2) {
+                shouldDisplay = true
+            } else if(notificationLevel === 1) {
+                if(content.includes(matrix.displayName))
+                    shouldDisplay = true
+            }
+
+            if(shouldDisplay)
+                desktop.showMessage(matrix.resolveMemberId(sender).displayName + " (" + room.name + ")", content)
         }
     }
 }

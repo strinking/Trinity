@@ -124,7 +124,7 @@ void MatrixCore::logout() {
 }
 
 void MatrixCore::updateAccountInformation() {
-    network::get("/_matrix/client/r0/profile/@" + userId + "/displayname", [this](QNetworkReply* reply) {
+    network::get("/_matrix/client/r0/profile/" + userId + "/displayname", [this](QNetworkReply* reply) {
         const QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
 
         displayName = document.object()["displayname"].toString();
@@ -139,7 +139,7 @@ void MatrixCore::setDisplayName(const QString& name) {
         {"displayname", name}
     };
 
-    network::putJSON("/_matrix/client/r0/profile/@" + userId + "/displayname", displayNameObject, [this, name](QNetworkReply* reply) {
+    network::putJSON("/_matrix/client/r0/profile/" + userId + "/displayname", displayNameObject, [this, name](QNetworkReply* reply) {
         emit displayNameChanged();
     });
 }
@@ -164,6 +164,14 @@ void MatrixCore::sync() {
             Room* room = new Room(this);
             room->setId(id);
             room->setJoinState(joinState);
+
+            QSettings settings;
+            settings.beginGroup(id);
+            if(settings.contains("notificationLevel"))
+                room->setNotificationLevel(settings.value("notificationLevel").toInt(), true);
+            else
+                room->setNotificationLevel(1);
+            settings.endGroup();
 
             network::get("/_matrix/client/r0/rooms/" + id + "/state/m.room.name", [this, room](QNetworkReply* reply) {
                 const QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
@@ -829,7 +837,7 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
         addEvent(e);
 
         if(!firstSync && !traversingHistory)
-            emit message(e->getSender(), e->getMsg());
+            emit message(&room, e->getSender(), e->getMsg());
     }
 }
 

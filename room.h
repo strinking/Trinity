@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QString>
 #include <QDateTime>
+#include <QSettings>
 
 #include "community.h"
 
@@ -131,6 +132,7 @@ class Room : public QObject
     Q_PROPERTY(QString highlightCount READ getHighlightCount NOTIFY highlightCountChanged)
     Q_PROPERTY(QString notificationCount READ getNotificationCount NOTIFY notificationCountChanged)
     Q_PROPERTY(bool direct READ getDirect NOTIFY directChanged)
+    Q_PROPERTY(int notificationLevel READ getNotificationLevel WRITE setNotificationLevel NOTIFY notificationLevelChanged)
 public:
     Room(QObject* parent = nullptr) : QObject(parent) {}
 
@@ -184,6 +186,19 @@ public:
         emit directChanged();
     }
 
+    void setNotificationLevel(const int level, const bool skipSave = false) {
+        notificationLevel = level;
+
+        if(!skipSave) {
+            QSettings settings;
+            settings.beginGroup(id);
+            settings.setValue("notificationLevel", notificationLevel);
+            settings.endGroup();
+        }
+
+        emit notificationLevelChanged();
+    }
+
     QString getId() const {
         return id;
     }
@@ -216,6 +231,10 @@ public:
         return direct;
     }
 
+    int getNotificationLevel() const {
+        return notificationLevel;
+    }
+
     QList<Event*> events;
     QString prevBatch;
 
@@ -228,6 +247,7 @@ private:
     QString invitedBy;
     unsigned int highlightCount = 0, notificationCount = 0;
     bool direct = false;
+    int notificationLevel = 1;
 
 signals:
     void idChanged();
@@ -240,4 +260,5 @@ signals:
     void highlightCountChanged();
     void notificationCountChanged();
     void directChanged();
+    void notificationLevelChanged();
 };
