@@ -496,13 +496,16 @@ void MatrixCore::updateMembers(Room* room) {
                         m = idToMember[id];
                     }
 
-                    eventModel.updateEventsByMember(id);
+                    if(currentRoom == room) {
+                        eventModel.updateEventsByMember(id);
 
-                    memberModel.beginUpdate(0);
+                        memberModel.beginUpdate(0);
+                    }
 
                     room->members.push_back(m);
 
-                    memberModel.endUpdate();
+                    if(currentRoom == room)
+                        memberModel.endUpdate();
                 }
             }
         }
@@ -731,7 +734,9 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
         for(size_t i = 0; i < unsentMessages.size(); i++) {
             if(event["sender"].toString() == userId && unsentMessages[i]->getRoom() == room.getId()) {
                 found = true;
-                eventModel.updateEvent(unsentMessages[i]);
+                if(currentRoom == &room)
+                    eventModel.updateEvent(unsentMessages[i]);
+
                 unsentMessages.removeAt(i);
             }
         }

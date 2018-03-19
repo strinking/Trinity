@@ -17,5 +17,7 @@
         <file>Directory.qml</file>
         <file>InviteDialog.qml</file>
         <file>BackButton.qml</file>
+        <file>icons/settings.png</file>
+        <file>icons/memberlist.png</file>
     </qresource>
 </RCC>

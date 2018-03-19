@@ -276,12 +276,13 @@ Rectangle {
             ToolButton {
                 id: showMemberListButton
 
+                width: 25
+                height: 25
+
                 anchors.verticalCenter: parent.verticalCenter
 
                 anchors.right: settingsButton.left
                 anchors.rightMargin: 10
-
-                icon.name: "face-plain"
 
                 onClicked: {
                     if(memberList.width == 0)
@@ -292,22 +293,59 @@ Rectangle {
 
                 ToolTip.visible: hovered
                 ToolTip.text: "Member List"
+
+                Image {
+                    id: memberListButtonImage
+
+                    anchors.fill: parent
+
+                    sourceSize.width: parent.width
+                    sourceSize.height: parent.height
+
+                    source: "icons/memberlist.png"
+                }
+
+                ColorOverlay {
+                    anchors.fill: parent
+                    source: memberListButtonImage
+
+                    color: parent.hovered ? "white" : (memberList.width == 200 ? "white" : Qt.rgba(0.8, 0.8, 0.8, 1.0))
+                }
             }
 
             ToolButton {
                 id: settingsButton
 
+                width: 25
+                height: 25
+
                 anchors.verticalCenter: parent.verticalCenter
 
                 anchors.right: parent.right
-                anchors.rightMargin: 10
-
-                icon.name: "preferences-system"
+                anchors.rightMargin: 15
 
                 onClicked: stack.push("qrc:/Settings.qml")
 
                 ToolTip.visible: hovered
                 ToolTip.text: "Settings"
+
+                Image {
+                    id: settingsButtonImage
+
+                    anchors.fill: parent
+
+                    sourceSize.width: parent.width
+                    sourceSize.height: parent.height
+
+                    source: "icons/settings.png"
+                }
+
+                ColorOverlay {
+                    anchors.fill: parent
+                    source: settingsButtonImage
+
+                    color: parent.hovered ? "white" : Qt.rgba(0.8, 0.8, 0.8, 1.0)
+                }
             }
         }
 
