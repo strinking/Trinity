@@ -446,7 +446,7 @@ Rectangle {
                             textFormat: Text.PlainText
                         }
 
-                        Text {
+                        TextEdit {
                             id: message
 
                             y: condense ? 0 : 20
@@ -455,6 +455,9 @@ Rectangle {
                             width: parent.width
 
                             wrapMode: Text.Wrap
+
+                            readOnly: true
+                            selectByMouse: true
 
                             color: sent ? "white" : "gray"
 
