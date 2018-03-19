@@ -23,14 +23,32 @@ Rectangle {
         BackButton {
             id: backButton
 
+            anchors.top: parent.top
+            anchors.topMargin: 15
+
             anchors.right: parent.right
+        }
+
+        Text {
+            id: directoryLabel
+
+            anchors.top: parent.top
+            anchors.topMargin: 15
+
+            text: "Directory"
+
+            font.pointSize: 25
+            font.bold: true
+
+            color: "white"
         }
 
         ListView {
             width: parent.width
             height: parent.height - backButton.height
 
-            anchors.top: backButton.bottom
+            anchors.top: directoryLabel.bottom
+            anchors.topMargin: 10
 
             model: matrix.publicRooms
 

@@ -25,7 +25,8 @@ public:
         if(reply->request().originatingObject() == this) {
             fn(reply);
 
-            delete this; // TODO: what is this
+            deleteLater();
+            reply->deleteLater();
         }
     }
 };
