@@ -217,7 +217,7 @@ void MatrixCore::sync() {
 
         for(const auto id : document.object()["rooms"].toObject()["invite"].toObject().keys()) {
             if(!invitedRooms.count(id)) {
-                Room* room = createRoom(id, "invited");
+                Room* room = createRoom(id, "Invited");
 
                 for(auto event : document.object()["rooms"].toObject()["invite"].toObject()[id].toObject()["invite_state"].toObject()["events"].toArray()) {
                     const QString type = event.toObject()["type"].toString();
@@ -240,7 +240,7 @@ void MatrixCore::sync() {
 
         for(const auto id : document.object()["rooms"].toObject()["join"].toObject().keys()) {
             if(!joinedRooms.count(id)) {
-                createRoom(id, "joined");
+                createRoom(id, "Joined");
                 joinedRooms.push_back(id);
             }
         }
@@ -333,7 +333,7 @@ void MatrixCore::sync() {
                 else
                     community = idToCommunity[id];
 
-                community->setJoinState("joined");
+                community->setJoinState("Joined");
 
                 joinedCommunities.push_back(community);
                 joinedCommunitiesIds.push_back(community->getId());
@@ -430,7 +430,7 @@ void MatrixCore::joinRoom(const QString& id) {
 
                 for(const auto roomObject : rooms) {
                     if(roomObject->getId() == id) {
-                        roomObject->setJoinState("joined");
+                        roomObject->setJoinState("Joined");
                         roomObject->setGuestDenied(false);
 
                         emit roomListChanged();

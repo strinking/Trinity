@@ -8,18 +8,16 @@ Rectangle {
     id: client
     color: Qt.rgba(0.05, 0.05, 0.05, 1.0)
 
-    property var shouldScroll: false
+    property bool shouldScroll: false
 
     ListView {
        id: channels
-       width: 150
+       width: 180
        height: parent.height
        anchors.right: rightArea.left
        anchors.left: client.left
 
        model: matrix.roomListModel
-
-       clip: true
 
        section.property: "section"
        section.criteria: ViewSection.FullString
@@ -30,16 +28,21 @@ Rectangle {
            color: "transparent"
 
            Text {
+               anchors.verticalCenter: parent.verticalCenter
+
+               anchors.left: parent.left
+               anchors.leftMargin: 5
+
                text: section
 
-               color: "red"
+               color: Qt.rgba(0.8, 0.8, 0.8, 1.0)
 
                textFormat: Text.PlainText
            }
        }
 
        delegate: Rectangle {
-            width: 150
+            width: parent.width
             height: 25
 
             property bool selected: channels.currentIndex === matrix.roomListModel.getOriginalIndex(index)
