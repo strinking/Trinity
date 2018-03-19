@@ -770,6 +770,8 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
         for(size_t i = 0; i < unsentMessages.size(); i++) {
             if(event["sender"].toString() == userId && unsentMessages[i]->getRoom() == room.getId()) {
                 found = true;
+                unsentMessages[i]->sent = true;
+
                 if(currentRoom == &room)
                     eventModel.updateEvent(unsentMessages[i]);
 
