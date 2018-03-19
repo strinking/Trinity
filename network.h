@@ -22,7 +22,7 @@ namespace network {
 
     request.setHeader(QNetworkRequest::ContentLengthHeader, QByteArray::number(jsonPost.size()));
 
-    RequestSender* sender = new RequestSender();
+    RequestSender* sender = new RequestSender(manager);
     sender->fn = fn;
 
     request.setOriginatingObject(sender);
@@ -40,7 +40,7 @@ namespace network {
 
     request.setHeader(QNetworkRequest::ContentLengthHeader, QByteArray::number(data.size()));
 
-    RequestSender* sender = new RequestSender();
+    RequestSender* sender = new RequestSender(manager);
     sender->fn = fn;
 
     request.setOriginatingObject(sender);
@@ -55,7 +55,7 @@ namespace network {
     QNetworkRequest request(homeserverURL + path);
     request.setRawHeader("Authorization", accessToken.toLocal8Bit());
 
-    RequestSender* sender = new RequestSender();
+    RequestSender* sender = new RequestSender(manager);
     sender->fn = fn;
 
     request.setOriginatingObject(sender);
@@ -90,7 +90,7 @@ namespace network {
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setRawHeader("Authorization", accessToken.toLocal8Bit());
 
-    RequestSender* sender = new RequestSender();
+    RequestSender* sender = new RequestSender(manager);
     sender->fn = fn;
 
     request.setOriginatingObject(sender);
@@ -110,7 +110,7 @@ namespace network {
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
     request.setRawHeader("Authorization", accessToken.toLocal8Bit());
 
-    RequestSender* sender = new RequestSender();
+    RequestSender* sender = new RequestSender(manager);
     sender->fn = fn;
 
     request.setOriginatingObject(sender);

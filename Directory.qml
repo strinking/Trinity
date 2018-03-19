@@ -20,12 +20,10 @@ Rectangle {
 
         color: "transparent"
 
-        Button {
+        BackButton {
             id: backButton
 
-            text: "Back"
-
-            onClicked: stack.pop()
+            anchors.right: parent.right
         }
 
         ListView {

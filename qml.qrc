@@ -16,5 +16,6 @@
         <file>Communities.qml</file>
         <file>Directory.qml</file>
         <file>InviteDialog.qml</file>
+        <file>BackButton.qml</file>
     </qresource>
 </RCC>

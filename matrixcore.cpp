@@ -355,7 +355,7 @@ void MatrixCore::sendMessage(Room* room, const QString& message) {
         {"body", message}
     };
 
-    Event* e = new Event();
+    Event* e = new Event(room);
     e->setSender(userId);
     e->timestamp = QDateTime::currentDateTime();
     e->setMsg(message);
@@ -638,7 +638,7 @@ void MatrixCore::loadDirectory() {
 
                 Room* r = nullptr;
                 if(!idToRoom.contains(roomId)) {
-                    r = new Room();
+                    r = new Room(this);
                     r->setId(roomId);
                     r->setName(roomObject["name"].toString());
 

@@ -9,7 +9,8 @@ class RequestSender : public QObject
 {
     Q_OBJECT
 public:
-    RequestSender() = default;
+    RequestSender(QObject* parent = nullptr) : QObject(parent) {}
+
     RequestSender(const RequestSender& other) {
         fn = other.fn;
     }
