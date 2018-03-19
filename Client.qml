@@ -467,7 +467,7 @@ Rectangle {
                             color: sent ? "white" : "gray"
 
                             anchors.left: condense ? parent.left : avatar.right
-                            anchors.leftMargin: condense ? 45 : 10
+                            anchors.leftMargin: condense ? 48 : 10
                         }
 
                         MouseArea {
