@@ -210,6 +210,8 @@ void MatrixCore::sync() {
 
             emit roomListChanged();
 
+            updateMembers(room);
+
             return room;
         };
 

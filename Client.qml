@@ -33,6 +33,8 @@ Rectangle {
                text: section
 
                color: "red"
+
+               textFormat: Text.PlainText
            }
        }
 
@@ -48,6 +50,8 @@ Rectangle {
 
             Image {
                 id: roomAvatar
+
+                cache: true
 
                 anchors.top: parent.top
                 anchors.topMargin: 5
@@ -86,6 +90,8 @@ Rectangle {
                 anchors.leftMargin: 5
 
                 color: selected ? "black" : (highlightCount > 0 ? "red" : (notificationCount > 0 ? "blue" : "white"))
+
+                textFormat: Text.PlainText
             }
 
             MouseArea {
@@ -185,6 +191,8 @@ Rectangle {
             Image {
                 id: channelAvatar
 
+                cache: true
+
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.leftMargin: 15
@@ -226,6 +234,8 @@ Rectangle {
                 text: matrix.currentRoom.name
 
                 color: "white"
+
+                textFormat: Text.PlainText
             }
 
             Text {
@@ -259,6 +269,8 @@ Rectangle {
 
                     onReleased: showDialog(matrix.currentRoom.name, matrix.currentRoom.topic)
                 }
+
+                textFormat: Text.PlainText
             }
 
             ToolButton {
@@ -321,6 +333,8 @@ Rectangle {
 
                     anchors.fill: parent
 
+                    cacheBuffer: 200
+
                     delegate: Rectangle {                        
                         width: parent.width
                         height: (condense ? 5 : 25) + message.contentHeight
@@ -329,6 +343,8 @@ Rectangle {
 
                         Image {
                             id: avatar
+
+                            cache: true
 
                             anchors.top: parent.top
                             anchors.topMargin: 5
@@ -366,6 +382,8 @@ Rectangle {
 
                             anchors.left: avatar.right
                             anchors.leftMargin: 10
+
+                            textFormat: Text.PlainText
                         }
 
                         Text {
@@ -375,6 +393,8 @@ Rectangle {
 
                             anchors.left: senderText.right
                             anchors.leftMargin: 10
+
+                            textFormat: Text.PlainText
                         }
 
                         Text {
@@ -457,6 +477,8 @@ Rectangle {
                         color: "white"
 
                         text: "You have been invited to this room by " + matrix.currentRoom.invitedBy
+
+                        textFormat: Text.PlainText
                     }
 
                     Button {
@@ -561,6 +583,8 @@ Rectangle {
                     color: "white"
 
                     text: matrix.typingText
+
+                    textFormat: Text.PlainText
                 }
             }
         }
@@ -591,6 +615,8 @@ Rectangle {
 
                     Image {
                         id: memberAvatar
+
+                        cache: true
 
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
@@ -625,6 +651,8 @@ Rectangle {
                         color: "white"
 
                         text: displayName
+
+                        textFormat: Text.PlainText
                     }
 
                     MouseArea {
@@ -747,13 +775,11 @@ Rectangle {
                 messages.positionViewAtEnd()
         }
 
-        onInitialSyncFinished: {
-            matrix.changeCurrentRoom(0)
-        }
+        onInitialSyncFinished: matrix.changeCurrentRoom(0)
 
         onCurrentRoomChanged: {
-            matrix.readMessageHistory(matrix.currentRoom)
-            matrix.updateMembers(matrix.currentRoom)
+            if(messages.contentY < messages.originY + 5)
+                matrix.readMessageHistory(matrix.currentRoom)
         }
 
         onMessage: {
