@@ -12,7 +12,10 @@ public:
         auto const proxyIndex = index(i, 0);
         auto const sourceIndex = mapToSource(proxyIndex);
 
-        return sourceIndex.row();
+        if(!sourceIndex.isValid())
+            return 0;
+        else
+            return sourceIndex.row();
     }
 };
 
