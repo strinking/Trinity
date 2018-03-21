@@ -13,7 +13,7 @@ WIP Qt5 QML Matrix client
 
 ## Screenshots
 
-![Screenshot](https://raw.githubusercontent.com/invghost/Trinity/master/screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/invghost/Trinity/master/misc/screenshot.png)
 
 ## Dependencies
 * Qt5
