@@ -5,6 +5,9 @@
 #include <QJsonArray>
 #include <QRandomGenerator>
 #include <QSettings>
+#include <QPixmap>
+#include <QStandardPaths>
+#include <QDir>
 
 #include "network.h"
 #include "community.h"
@@ -31,6 +34,29 @@ MatrixCore::MatrixCore(QObject* parent) : QObject(parent), roomListModel(rooms),
     directoryListSortModel.setSourceModel(&directoryListModel);
 
     updateAccountInformation();
+
+    QString appDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    if(!QDir(appDir).exists())
+        QDir().mkdir(appDir);
+
+    QString emotesDir = appDir + "/emotes";
+    if(!QDir(emotesDir).exists())
+        QDir().mkdir(emotesDir);
+
+    if(QDir(emotesDir).exists())  {
+        for(auto emote : QDir(emotesDir).entryInfoList()) {
+            // TODO: add support for more than just .png emotes
+            if(emote.fileName().contains(".png")) {
+                Emote* e = new Emote();
+                e->name = emote.fileName().remove(".png");
+                e->path = emote.absoluteFilePath();
+
+                emotes.push_back(e);
+            }
+        }
+    }
+
+    localEmoteModel.setList(&emotes);
 }
 
 void MatrixCore::registerAccount(const QString &username, const QString &password, const QString& session, const QString& type) {
@@ -372,6 +398,12 @@ void MatrixCore::sendMessage(Room* room, const QString& message) {
     e->setRoom(room->getId());
     e->sent = false;
 
+    QString msg = e->getMsg();
+    for(const auto& emote : emotes) {
+        msg.replace(":" + emote->name + ":", "<img src='file://" + emote->path + "' width=22 height=22/>");
+    }
+    e->setMsg(msg);
+
     eventModel.beginUpdate(0);
     room->events.push_front(e);
     eventModel.endUpdate();
@@ -645,6 +677,45 @@ void MatrixCore::changeCurrentRoom(const unsigned int index) {
         changeCurrentRoom(&emptyRoom);
 }
 
+void MatrixCore::addEmote(const QString& url) {
+    qDebug() << "adding emote " << url;
+
+    QString newUrl = url;
+    newUrl.remove("file://");
+
+    QUrl file(newUrl);
+
+    QString appDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    if(!QDir(appDir).exists())
+        QDir().mkdir(appDir);
+
+    QString emotesDir = appDir + "/emotes";
+    if(!QDir(emotesDir).exists())
+        QDir().mkdir(emotesDir);
+
+    QPixmap pixmap(newUrl);
+    pixmap = pixmap.scaled(22, 22, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    pixmap.save(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/emotes/" + file.fileName());
+
+    Emote* emote = new Emote();
+    emote->path = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/emotes/" + file.fileName();
+    emote->name = file.fileName().remove(".png");
+
+    emotes.push_back(emote);
+
+    emit localEmotesChanged();
+    localEmoteModel.update();
+}
+
+void MatrixCore::deleteEmote(Emote* emote) {
+    emotes.removeOne(emote);
+
+    QFile(emote->path).remove();
+
+    emit localEmotesChanged();
+    localEmoteModel.update();
+}
+
 Member* MatrixCore::resolveMemberId(const QString& id) const {
     return idToMember.value(id);
 }
@@ -742,6 +813,10 @@ RoomListSortModel* MatrixCore::getDirectoryListModel() {
     return &directoryListSortModel;
 }
 
+EmoteListModel* MatrixCore::getLocalEmoteListModel() {
+    return &localEmoteModel;
+}
+
 MemberModel* MatrixCore::getMemberModel() {
     return &memberModel;
 }
@@ -833,6 +908,13 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
             delete e;
             return;
         }
+
+        QString msg = e->getMsg();
+        for(const auto& emote : emotes) {
+            msg.replace(":" + emote->name + ":", "<img src='file://" + emote->path + "' width=22 height=22/>");
+        }
+
+        e->setMsg(msg);
 
         addEvent(e);
 

@@ -18,6 +18,7 @@
 #include "communitylistmodel.h"
 #include "community.h"
 #include "roomlistsortmodel.h"
+#include "emote.h"
 
 QNetworkAccessManager* network::manager;
 QString network::homeserverURL, network::accessToken;
@@ -41,6 +42,7 @@ int main(int argc, char* argv[]) {
     qmlRegisterUncreatableType<Event>("trinity.matrix", 1, 0, "Event", "");
     qmlRegisterUncreatableType<Member>("trinity.matrix", 1, 0, "Member", "");
     qmlRegisterUncreatableType<Community>("trinity.matrix", 1, 0, "Community", "");
+    qmlRegisterUncreatableType<Emote>("trinity.matrix", 1, 0, "Emote", "");
     qmlRegisterType<CommunityListModel>("trinity.matrix", 1, 0, "CommunityListModel");
 
     // platform

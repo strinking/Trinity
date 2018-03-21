@@ -10,6 +10,8 @@
 #include "roomlistmodel.h"
 #include "membermodel.h"
 #include "roomlistsortmodel.h"
+#include "emote.h"
+#include "emotelistmodel.h"
 
 class MatrixCore : public QObject
 {
@@ -25,6 +27,7 @@ class MatrixCore : public QObject
     Q_PROPERTY(RoomListSortModel* publicRooms READ getDirectoryListModel NOTIFY publicRoomsChanged)
     Q_PROPERTY(QString typingText READ getTypingText NOTIFY typingTextChanged)
     Q_PROPERTY(bool markdownEnabled READ getMarkdownEnabled WRITE setMarkdownEnabled NOTIFY markdownEnabledChanged)
+    Q_PROPERTY(EmoteListModel* localEmoteModel READ getLocalEmoteListModel NOTIFY localEmotesChanged)
 public:
     MatrixCore(QObject* parent = nullptr);
 
@@ -67,6 +70,9 @@ public:
     Q_INVOKABLE void changeCurrentRoom(Room* room);
     Q_INVOKABLE void changeCurrentRoom(const unsigned int index);
 
+    Q_INVOKABLE void addEmote(const QString& url);
+    Q_INVOKABLE void deleteEmote(Emote* emote);
+
     Q_INVOKABLE Member* resolveMemberId(const QString& id) const;
     Q_INVOKABLE Community* resolveCommunityId(const QString& id) const;
     Q_INVOKABLE Room* resolveRoomId(const QString& id) const;
@@ -87,6 +93,7 @@ public:
     RoomListSortModel* getRoomListModel();
     RoomListSortModel* getDirectoryListModel();
     MemberModel* getMemberModel();
+    EmoteListModel* getLocalEmoteListModel();
 
     QString getHomeserverURL() const;
 
@@ -100,6 +107,7 @@ public:
     RoomListModel roomListModel, directoryListModel;
     RoomListSortModel roomListSortModel, directoryListSortModel;
     MemberModel memberModel;
+    EmoteListModel localEmoteModel;
 
     Room* currentRoom = nullptr;
 
@@ -118,6 +126,7 @@ signals:
     void publicRoomsChanged();
     void typingTextChanged();
     void markdownEnabledChanged();
+    void localEmotesChanged();
 
 private:
     void consumeEvent(const QJsonObject& event, Room& room, const bool insertFront = true);
@@ -143,6 +152,8 @@ private:
     QMap<QString, Room*> idToRoom;
 
     QString typingText;
+
+    QList<Emote*> emotes;
 
     bool firstSync = true, traversingHistory = false;
     bool markdownEnabled = true;

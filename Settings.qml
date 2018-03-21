@@ -2,6 +2,7 @@ import QtQuick 2.10
 import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
 import QtQuick.Shapes 1.0
+import QtQuick.Dialogs 1.2
 
 Rectangle {
     id: settings
@@ -42,6 +43,10 @@ Rectangle {
 
             TabButton {
                 text: "Appearance"
+            }
+
+            TabButton {
+                text: "Emotes"
             }
         }
 
@@ -157,6 +162,114 @@ Rectangle {
             Item {
                 id: appearanceTab
             }
+
+            Item {
+                id: emotesTab
+
+                Rectangle {
+                    width: parent.width
+                    height: parent.height
+
+                    color: "transparent"
+
+                    Button {
+                        id: loadEmoteButton
+
+                        text: "Load from file..."
+
+                        onClicked: loadEmoteLocallyDialog.open()
+                    }
+
+                    ListView {
+                        id: localEmoteList
+
+                        width: parent.width
+                        height: parent.height
+
+                        anchors.top: loadEmoteButton.bottom
+
+                        model: matrix.localEmoteModel
+
+                        delegate: Rectangle {
+                            width: parent.width
+                            height: 50
+
+                            color: "transparent"
+
+                            property string name: display.name
+                            property var emote: display
+
+                            Image {
+                                id: emoteImage
+
+                                anchors.left: parent.left
+                                anchors.leftMargin: 10
+                                anchors.verticalCenter: parent.verticalCenter
+
+                                width: 22
+                                height: 22
+
+                                source: "file://" + display.path
+                            }
+
+                            Text {
+                                anchors.left: emoteImage.right
+                                anchors.leftMargin: 10
+
+                                anchors.verticalCenter: parent.verticalCenter
+
+                                text: display.name
+
+                                color: "white"
+                            }
+
+                            ToolButton {
+                                anchors.right: parent.right
+                                anchors.rightMargin: 10
+
+                                anchors.verticalCenter: parent.verticalCenter
+
+                                text: "X"
+
+                                onClicked: showDialog("Deletion Confirmation", "Are you sure you want to delete " + name + "?", [
+                                                          {
+                                                              text: "Confirm",
+                                                              onClicked: function(dialog) {
+                                                                   matrix.deleteEmote(emote)
+                                                                   dialog.close()
+                                                              }
+                                                          },
+                                                          {
+                                                              text: "Cancel",
+                                                              onClicked: function(dialog) {
+                                                                  dialog.close()
+                                                              }
+                                                          }
+                                                      ])
+                            }
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    FileDialog {
+        id: loadEmoteLocallyDialog
+        title: "Load emote from disk"
+        folder: shortcuts.home
+
+        nameFilters: [ "Image Files (*.png)" ]
+
+        selectExisting: true
+        selectFolder: false
+        selectMultiple: false
+
+        onAccepted: {
+            matrix.addEmote(fileUrl)
+            close()
+        }
+
+        onRejected: close()
     }
 }

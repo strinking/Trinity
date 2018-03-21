@@ -26,7 +26,10 @@ add_executable(${PROJECT_NAME}
     communitylistmodel.h
     communitylistmodel.cpp
     roomlistsortmodel.cpp
-    roomlistsortmodel.h)
+    roomlistsortmodel.h
+    emotelistmodel.h
+    emotelistmodel.cpp
+    emote.h)
 
 target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Quick Qt5::Widgets cmark)
 
