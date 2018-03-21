@@ -1,6 +1,16 @@
 # Trinity
 WIP Qt5 QML Matrix client
 
+## Features
+* Basic messaging capabilities
+  * Sending and recieving markdown messages, formatting can be disabled
+  * Typing notifications
+* Per-room notification settings
+* Listing and joining public rooms
+  * Inviting other members and accepting other people's invites
+* Start direct chats with other members
+* Custom emote support
+
 ## Screenshots
 
 ![Screenshot](https://raw.githubusercontent.com/invghost/Trinity/master/screenshot.png)
