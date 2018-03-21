@@ -1,23 +1,23 @@
 <RCC>
     <qresource prefix="/">
-        <file>Client.qml</file>
-        <file>main.qml</file>
-        <file>Login.qml</file>
-        <file>background.jpg</file>
-        <file>matrix-logo.png</file>
-        <file>Dialog.qml</file>
-        <file>ServerSelection.qml</file>
-        <file>AccountCreation.qml</file>
-        <file>Settings.qml</file>
-        <file>RoomSettings.qml</file>
-        <file>Profile.qml</file>
-        <file>Community.qml</file>
-        <file>placeholder.png</file>
-        <file>Communities.qml</file>
-        <file>Directory.qml</file>
-        <file>InviteDialog.qml</file>
-        <file>BackButton.qml</file>
-        <file>icons/settings.png</file>
-        <file>icons/memberlist.png</file>
+        <file alias="Client.qml">qml/Client.qml</file>
+        <file alias="main.qml">qml/main.qml</file>
+        <file alias="Login.qml">qml/Login.qml</file>
+        <file alias="Dialog.qml">qml/Dialog.qml</file>
+        <file alias="ServerSelection.qml">qml/ServerSelection.qml</file>
+        <file alias="AccountCreation.qml">qml/AccountCreation.qml</file>
+        <file alias="Settings.qml">qml/Settings.qml</file>
+        <file alias="RoomSettings.qml">qml/RoomSettings.qml</file>
+        <file alias="Profile.qml">qml/Profile.qml</file>
+        <file alias="Community.qml">qml/Community.qml</file>
+        <file alias="Communities.qml">qml/Communities.qml</file>
+        <file alias="Directory.qml">qml/Directory.qml</file>
+        <file alias="InviteDialog.qml">qml/InviteDialog.qml</file>
+        <file alias="BackButton.qml">qml/BackButton.qml</file>
+        <file alias="background.jpg">resources/background.jpg</file>
+        <file alias="matrix-logo.png">resources/matrix-logo.png</file>
+        <file alias="placeholder.png">resources/placeholder.png</file>
+        <file alias="icons/settings.png">resources/icons/settings.png</file>
+        <file alias="icons/memberlist.png">resources/icons/memberlist.png</file>
     </qresource>
 </RCC>
