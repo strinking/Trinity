@@ -161,7 +161,7 @@ Rectangle {
                     anchors.top: passwordField.bottom
 
                     text: "Forgot your password?"
-                    color: "white"
+                    color: "grey"
 
                     font.underline: true
 
