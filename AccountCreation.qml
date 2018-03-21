@@ -16,58 +16,86 @@ Rectangle {
 
         color: "transparent"
 
-        Button {
+        BackButton {
             id: backButton
 
-            text: "Back"
+            anchors.top: parent.top
+            anchors.topMargin: 15
 
-            onClicked: stack.pop()
+            anchors.right: parent.right
         }
 
-        Text {
-            id: usernameLabel
+        Rectangle {
+            width: 200
+            height: 300
 
-            anchors.top: backButton.bottom
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
 
-            text: "Username"
+            color: "transparent"
 
-            color: "white"
-        }
+            Text {
+                id: accountCreationLabel
 
-        TextField {
-            id: usernameField
+                anchors.top: parent.top
+                anchors.topMargin: 15
 
-            anchors.top: usernameLabel.bottom
-        }
+                text: "Create an account"
 
-        Text {
-            id: passwordLabel
+                font.pointSize: 18
 
-            anchors.top: usernameField.bottom
+                color: "white"
+            }
 
-            text: "Password"
+            Text {
+                id: usernameLabel
 
-            color: "white"
-        }
+                anchors.top: accountCreationLabel.bottom
+                anchors.topMargin: 10
 
-        TextField {
-            id: passwordField
+                text: "Username"
 
-            anchors.top: passwordLabel.bottom
+                color: "white"
+            }
 
-            echoMode: TextInput.Password
-        }
+            TextField {
+                id: usernameField
 
-        Button {
-            id: registerButton
+                anchors.top: usernameLabel.bottom
+            }
 
-            anchors.top: passwordField.bottom
+            Text {
+                id: passwordLabel
 
-            text: "Register"
+                anchors.top: usernameField.bottom
 
-            onClicked: {
-                setRegisterState(false)
-                matrix.registerAccount(usernameField.text, passwordField.text)
+                text: "Password"
+
+                color: "white"
+            }
+
+            TextField {
+                id: passwordField
+
+                anchors.top: passwordLabel.bottom
+
+                echoMode: TextInput.Password
+            }
+
+            Button {
+                id: registerButton
+
+                anchors.top: passwordField.bottom
+                anchors.topMargin: 15
+
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                text: "Register"
+
+                onClicked: {
+                    setRegisterState(false)
+                    matrix.registerAccount(usernameField.text, passwordField.text)
+                }
             }
         }
     }
