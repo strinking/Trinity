@@ -441,12 +441,18 @@ Rectangle {
 
                     delegate: Rectangle {                        
                         width: parent.width
-                        height: (condense ? 5 : 25) + message.contentHeight
+                        height: (condense ? 5 : 25) + messageArea.height
 
                         color: "transparent"
 
+                        property string attachment: display.attachment
+                        property var sender: matrix.resolveMemberId(display.sender)
+
                         Image {
                             id: avatar
+
+                            width: 33
+                            height: 33
 
                             cache: true
 
@@ -458,7 +464,7 @@ Rectangle {
                             sourceSize.width: 33
                             sourceSize.height: 33
 
-                            source: avatarURL ? avatarURL : "placeholder.png"
+                            source: sender.avatarURL ? sender.avatarURL : "placeholder.png"
 
                             visible: !condense
 
@@ -480,7 +486,7 @@ Rectangle {
                         Text {
                             id: senderText
 
-                            text: condense ? "" : sender
+                            text: condense ? "" : sender.displayName
 
                             color: "white"
 
@@ -501,30 +507,141 @@ Rectangle {
                             textFormat: Text.PlainText
                         }
 
-                        TextEdit {
-                            id: message
+                        Rectangle {
+                            id: messageArea
 
                             y: condense ? 0 : 20
-                            text: msg
+
+                            height: {
+                                if(display.msgType === "text")
+                                    return message.contentHeight
+                                else if(display.msgType === "image")
+                                    return messageThumbnail.height
+                                else
+                                    return preview.height
+                            }
 
                             width: parent.width
 
-                            wrapMode: Text.Wrap
-                            textFormat: Text.RichText
-
-                            readOnly: true
-                            selectByMouse: true
-
-                            color: sent ? "white" : "gray"
-
                             anchors.left: condense ? parent.left : avatar.right
                             anchors.leftMargin: condense ? 48 : 10
+
+                            color: "transparent"
+
+                            TextEdit {
+                                id: message
+
+                                text: display.msg
+
+                                width: parent.width
+
+                                wrapMode: Text.Wrap
+                                textFormat: Text.RichText
+
+                                readOnly: true
+                                selectByMouse: true
+
+                                color: display.sent ? "white" : "gray"
+
+                                visible: display.msgType === "text"
+                            }
+
+                            Image {
+                                id: messageThumbnail
+
+                                visible: display.msgType === "image"
+
+                                source: display.thumbnail
+                            }
+
+                            MouseArea {
+                                enabled: display.msgType === "image"
+
+                                cursorShape: Qt.PointingHandCursor
+
+                                anchors.fill: messageThumbnail
+
+                                onReleased: showImage(display.attachment)
+                            }
+
+                            Rectangle {
+                                id: preview
+
+                                width: 350
+                                height: 45
+
+                                visible: display.msgType === "file"
+
+                                radius: 5
+
+                                color: Qt.rgba(0.05, 0.05, 0.05, 1.0)
+
+                                Text {
+                                    id: previewFilename
+
+                                    x: 15
+                                    y: 7
+
+                                    text: display.msg
+
+                                    color: "#048dc2"
+                                }
+
+                                Text {
+                                    id: previewFilesize
+
+                                    x: 15
+                                    y: 22
+
+                                    font.pointSize: 9
+
+                                    text: display.attachmentSize / 1000.0 + " KB"
+
+                                    color: "gray"
+                                }
+
+                                ToolButton {
+                                    id: previewFileDownload
+
+                                    width: 25
+                                    height: 25
+
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 10
+
+                                    Image {
+                                        id: downloadButtonImage
+
+                                        anchors.fill: parent
+
+                                        sourceSize.width: parent.width
+                                        sourceSize.height: parent.height
+
+                                        source: "icons/download.png"
+                                    }
+
+                                    ColorOverlay {
+                                        anchors.fill: parent
+                                        source: downloadButtonImage
+
+                                        color: parent.hovered ? "white" : Qt.rgba(0.8, 0.8, 0.8, 1.0)
+                                    }
+
+                                    onClicked: {
+                                        console.log(attachment)
+                                        Qt.openUrlExternally(attachment)
+                                    }
+                                }
+                            }
                         }
 
                         MouseArea {
-                            anchors.fill: parent
+                            anchors.fill: messageArea
 
                             acceptedButtons: Qt.RightButton
+
+                            propagateComposedEvents: true
 
                             onClicked: contextMenu.popup()
                         }

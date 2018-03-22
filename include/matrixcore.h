@@ -132,6 +132,9 @@ private:
     void consumeEvent(const QJsonObject& event, Room& room, const bool insertFront = true);
     Community* createCommunity(const QString& id);
 
+    QString getMXCThumbnailURL(QString url);
+    QString getMXCMediaURL(QString url);
+
     QString getDisplayName() const;
 
     QList<Room*> rooms;

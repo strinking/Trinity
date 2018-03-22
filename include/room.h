@@ -12,6 +12,11 @@ class Event : public QObject
     Q_OBJECT
     Q_PROPERTY(QString sender READ getSender NOTIFY senderChanged)
     Q_PROPERTY(QString msg READ getMsg NOTIFY msgChanged)
+    Q_PROPERTY(QString msgType READ getMsgType NOTIFY msgTypeChanged)
+    Q_PROPERTY(QString attachment READ getAttachment NOTIFY attachmentChanged)
+    Q_PROPERTY(int attachmentSize READ getAttachmentSize NOTIFY attachmentSizeChanged)
+    Q_PROPERTY(QString thumbnail READ getThumbnail NOTIFY thumbnailChanged)
+    Q_PROPERTY(bool sent MEMBER sent)
 public:
     Event(QObject* parent = nullptr) : QObject(parent) {}
 
@@ -29,6 +34,26 @@ public:
         this->room = room;
     }
 
+    void setMsgType(const QString& type) {
+        msgType = type;
+        emit msgTypeChanged();
+    }
+
+    void setAttachment(const QString& url) {
+        attachment = url;
+        emit attachmentChanged();
+    }
+
+    void setAttachmentSize(const int size) {
+        attachmentSize = size;
+        emit attachmentSizeChanged();
+    }
+
+    void setThumbnail(const QString& url) {
+        thumbnail = url;
+        emit thumbnailChanged();
+    }
+
     QString getSender() const {
         return sender;
     }
@@ -41,17 +66,39 @@ public:
         return room;
     }
 
+    QString getMsgType() const {
+        return msgType;
+    }
+
+    QString getAttachment() const {
+        return attachment;
+    }
+
+    int getAttachmentSize() const {
+        return attachmentSize;
+    }
+
+    QString getThumbnail() const {
+        return thumbnail;
+    }
+
     QString eventId;
     QDateTime timestamp;
     bool sent = true;
 
 private:
     QString sender, msg;
-    QString room;
+    QString room, msgType;
+    QString attachment, thumbnail;
+    int attachmentSize;
 
 signals:
     void senderChanged();
     void msgChanged();
+    void msgTypeChanged();
+    void attachmentChanged();
+    void attachmentSizeChanged();
+    void thumbnailChanged();
 };
 
 class Member : public QObject {

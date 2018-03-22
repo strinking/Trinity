@@ -19,5 +19,7 @@
         <file alias="placeholder.png">resources/placeholder.png</file>
         <file alias="icons/settings.png">resources/icons/settings.png</file>
         <file alias="icons/memberlist.png">resources/icons/memberlist.png</file>
+        <file alias="icons/download.png">resources/icons/download.png</file>
+        <file>ImageViewer.qml</file>
     </qresource>
 </RCC>

@@ -334,7 +334,11 @@ void MatrixCore::sync() {
                             if(typing[i].toString() == userId)
                                 continue;
 
-                            typingText += resolveMemberId(typing[i].toString())->getDisplayName();
+                            const Member* member = resolveMemberId(typing[i].toString());
+                            if(!member)
+                                continue;
+
+                            typingText += member->getDisplayName();
                             if(i != typing.size() - 1)
                                 typingText += ", ";
 
@@ -901,13 +905,24 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
         e->eventId = event["event_id"].toString();
 
         if(msgType == "m.text" && !event["content"].toObject().contains("formatted_body")) {
+            e->setMsgType("text");
             e->setMsg(event["content"].toObject()["body"].toString());
         } else if(msgType == "m.text" && event["content"].toObject().contains("formatted_body")) {
+            e->setMsgType("text");
             e->setMsg(event["content"].toObject()["formatted_body"].toString());
-        } else {
-            delete e;
-            return;
-        }
+        } else if(msgType == "m.image") {
+            e->setMsgType("image");
+            e->setAttachment(getMXCMediaURL(event["content"].toObject()["url"].toString()));
+            e->setAttachmentSize(event["content"].toObject()["info"].toObject()["size"].toInt());
+            e->setThumbnail(getMXCThumbnailURL(event["content"].toObject()["info"].toObject()["thumbnail_url"].toString()));
+            e->setMsg(event["content"].toObject()["body"].toString());
+        } else if(msgType == "m.file") {
+            e->setMsgType("file");
+            e->setAttachment(getMXCMediaURL(event["content"].toObject()["url"].toString()));
+            e->setAttachmentSize(event["content"].toObject()["info"].toObject()["size"].toInt());
+            e->setMsg(event["content"].toObject()["body"].toString());
+        } else
+            e->setMsg(event["content"].toObject()["body"].toString());
 
         QString msg = e->getMsg();
         for(const auto& emote : emotes) {
@@ -946,6 +961,16 @@ Community* MatrixCore::createCommunity(const QString& id) {
     });
 
     return community;
+}
+
+QString MatrixCore::getMXCThumbnailURL(QString url) {
+    const QString imageId = url.remove("mxc://");
+    return network::homeserverURL + "/_matrix/media/r0/thumbnail/" + imageId + "?width=64&height=64&method=scale";
+}
+
+QString MatrixCore::getMXCMediaURL(QString url) {
+    const QString imageId = url.remove("mxc://");
+    return network::homeserverURL + "/_matrix/media/v1/download/" + imageId;
 }
 
 QString MatrixCore::getDisplayName() const {

@@ -11,14 +11,8 @@ class EventModel : public QAbstractListModel
     Q_OBJECT
 public:
     enum EventRoles {
-        SenderRole = Qt::UserRole + 1,
-        MsgRole,
-        SentRole,
-        TimestampRole,
-        AvatarURLRole,
-        EventIdRole,
-        SenderIdRole,
-        CondenseRole
+        CondenseRole = Qt::UserRole + 1,
+        TimestampRole
     };
 
     EventModel(MatrixCore& matrix);

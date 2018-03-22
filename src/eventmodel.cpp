@@ -18,46 +18,27 @@ QVariant EventModel::data(const QModelIndex &index, int role) const {
     if(!room || index.row() >= room->events.size())
         return "";
 
-    const Event* event = room->events[index.row()];
+    Event* event = room->events[index.row()];
 
-    if(role == SenderRole) {
-        const Member* member = matrix.resolveMemberId(event->getSender());
-        return member ? member->getDisplayName() : "Unknown";
-    } else if(role == MsgRole) {
-        return event->getMsg();
-    } else if(role == SentRole) {
-        return event->sent;
-    } else if(role == TimestampRole) {
-        return event->timestamp.toString(Qt::DefaultLocaleShortDate);
-    } else if(role == AvatarURLRole) {
-        const Member* member = matrix.resolveMemberId(event->getSender());
-        if(member)
-            return member->getAvatar();
-    } else if(role == EventIdRole) {
-        return event->eventId;
-    } else if(role == SenderIdRole) {
-        return event->getSender();
+    if(role == Qt::DisplayRole) {
+        return QVariant::fromValue<Event*>(event);
     } else if(role == CondenseRole) {
         if(index.row() + 1 >= room->events.size())
             return false;
 
         const Event* previousEvent = room->events[index.row() + 1];
         return previousEvent->getSender() == event->getSender();
-    }
+    } else if(role == TimestampRole)
+        return event->timestamp.toString(Qt::DefaultLocaleShortDate);
 
     return "";
 }
 
 QHash<int, QByteArray> EventModel::roleNames() const {
     QHash<int, QByteArray> roles;
-    roles[SenderRole] = "sender";
-    roles[MsgRole] = "msg";
-    roles[SentRole] = "sent";
-    roles[TimestampRole] = "timestamp";
-    roles[AvatarURLRole] = "avatarURL";
-    roles[EventIdRole] = "eventId";
-    roles[SenderIdRole] = "senderId";
+    roles[Qt::DisplayRole] = "display";
     roles[CondenseRole] = "condense";
+    roles[TimestampRole] = "timestamp";
 
     return roles;
 }

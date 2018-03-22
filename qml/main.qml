@@ -18,6 +18,11 @@ ApplicationWindow {
         popupContainer.open()
     }
 
+    property var showImage: function(url) {
+        var popup = Qt.createComponent("qrc:/ImageViewer.qml")
+        var popupContainer = popup.createObject(window, {"parent": window, "url": url})
+    }
+
     Component.onCompleted: {
         if(matrix.settingsValid()) {
             desktop.showTrayIcon(false)
