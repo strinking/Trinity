@@ -402,7 +402,8 @@ void MatrixCore::sendMessage(Room* room, const QString& message) {
     e->timestamp = QDateTime::currentDateTime();
     e->setMsg(message);
     e->setRoom(room->getId());
-    e->sent = false;
+    e->setSent(false);
+    e->setMsgType("text");
 
     QString msg = e->getMsg();
     for(const auto& emote : emotes) {
@@ -420,7 +421,7 @@ void MatrixCore::sendMessage(Room* room, const QString& message) {
         if(!reply->error()) {
             for(size_t i = 0; i < unsentMessages.size(); i++) {
                 if(unsentMessages[i] == e)
-                    e->sent = true;
+                    e->setSent(true);
             }
         } else {
             qDebug() << reply->readAll();
@@ -481,7 +482,7 @@ void MatrixCore::uploadAttachment(Room* room, const QString& path) {
     e->setSender(userId);
     e->timestamp = QDateTime::currentDateTime();
     e->setRoom(room->getId());
-    e->sent = false;
+    e->setSent(false);
 
     eventModel.beginUpdate(0);
     room->events.push_front(e);
@@ -507,7 +508,7 @@ void MatrixCore::uploadAttachment(Room* room, const QString& path) {
 
     network::postBinary("/_matrix/media/r0/upload?filename=" + f.fileName(), f.readAll(), mimeType.name(), [this, mimeType, fileName, fileSize, e](QNetworkReply* reply) {
         if(!reply->error()) {
-            e->sent = true;
+            e->setSent(true);
 
             const QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
 
@@ -913,7 +914,7 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
         for(size_t i = 0; i < unsentMessages.size(); i++) {
             if(event["sender"].toString() == userId && unsentMessages[i]->getRoom() == room.getId()) {
                 found = true;
-                unsentMessages[i]->sent = true;
+                unsentMessages[i]->setSent(true);
 
                 if(currentRoom == &room)
                     eventModel.updateEvent(unsentMessages[i]);
