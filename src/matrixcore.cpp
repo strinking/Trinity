@@ -8,6 +8,8 @@
 #include <QPixmap>
 #include <QStandardPaths>
 #include <QDir>
+#include <QMimeDatabase>
+#include <QMimeData>
 
 #include "network.h"
 #include "community.h"
@@ -474,6 +476,60 @@ void MatrixCore::removeMessage(const QString& eventId) {
     });
 }
 
+void MatrixCore::uploadAttachment(Room* room, const QString& path) {
+    Event* e = new Event(room);
+    e->setSender(userId);
+    e->timestamp = QDateTime::currentDateTime();
+    e->setRoom(room->getId());
+    e->sent = false;
+
+    eventModel.beginUpdate(0);
+    room->events.push_front(e);
+    eventModel.endUpdate();
+
+    unsentMessages.push_back(e);
+
+    QMimeDatabase mimeDb;
+    QMimeType mimeType = mimeDb.mimeTypeForFile(path);
+
+    QString filepath = path;
+    filepath.remove("file://");
+    QFile f(filepath);
+    f.open(QFile::ReadOnly);
+
+    const QString fileName = QFileInfo(f.fileName()).fileName();
+    const qint64 fileSize = f.size();
+
+    e->setAttachment(path);
+    e->setThumbnail(path);
+    e->setMsg(fileName);
+    e->setMsgType(mimeType.name().contains("image") ? "image" : "file");
+
+    network::postBinary("/_matrix/media/r0/upload?filename=" + f.fileName(), f.readAll(), mimeType.name(), [this, mimeType, fileName, fileSize, e](QNetworkReply* reply) {
+        if(!reply->error()) {
+            e->sent = true;
+
+            const QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
+
+            QJsonObject infoObject {
+                {"mimetype", mimeType.name()},
+                {"size", fileSize},
+            };
+
+            const QJsonObject imageObject {
+                {"msgtype", mimeType.name().contains("image") ? "m.image" : "m.file"},
+                {"body", fileName},
+                {"url", document.object()["content_uri"].toString()},
+                {"info", infoObject}
+            };
+
+            network::putJSON("/_matrix/client/r0/rooms/" + currentRoom->getId() + "/send/m.room.message/" + QRandomGenerator::global()->generate(), imageObject);
+        }
+    }, [e](qint64 sent, qint64 total) {
+        e->setSentProgress((double)sent / (double)total);
+    });
+}
+
 void MatrixCore::startDirectChat(const QString& id) {
     const QJsonObject roomObject {
         {"visibility", "private"},
@@ -914,7 +970,12 @@ void MatrixCore::consumeEvent(const QJsonObject& event, Room& room, const bool i
             e->setMsgType("image");
             e->setAttachment(getMXCMediaURL(event["content"].toObject()["url"].toString()));
             e->setAttachmentSize(event["content"].toObject()["info"].toObject()["size"].toInt());
-            e->setThumbnail(getMXCThumbnailURL(event["content"].toObject()["info"].toObject()["thumbnail_url"].toString()));
+
+            if(event["content"].toObject()["info"].toObject().contains("thumbnail_url"))
+                e->setThumbnail(getMXCThumbnailURL(event["content"].toObject()["info"].toObject()["thumbnail_url"].toString()));
+            else
+                e->setThumbnail(getMXCMediaURL(event["content"].toObject()["url"].toString()));
+
             e->setMsg(event["content"].toObject()["body"].toString());
         } else if(msgType == "m.file") {
             e->setMsgType("file");

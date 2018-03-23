@@ -17,6 +17,8 @@ class Event : public QObject
     Q_PROPERTY(int attachmentSize READ getAttachmentSize NOTIFY attachmentSizeChanged)
     Q_PROPERTY(QString thumbnail READ getThumbnail NOTIFY thumbnailChanged)
     Q_PROPERTY(bool sent MEMBER sent)
+    Q_PROPERTY(double sentProgress READ getSentProgress NOTIFY sentProgressChanged)
+    Q_PROPERTY(QString eventId MEMBER eventId)
 public:
     Event(QObject* parent = nullptr) : QObject(parent) {}
 
@@ -54,6 +56,11 @@ public:
         emit thumbnailChanged();
     }
 
+    void setSentProgress(const double progress) {
+        sentProgress = progress;
+        emit sentProgressChanged();
+    }
+
     QString getSender() const {
         return sender;
     }
@@ -82,6 +89,10 @@ public:
         return thumbnail;
     }
 
+    double getSentProgress() const {
+        return sentProgress;
+    }
+
     QString eventId;
     QDateTime timestamp;
     bool sent = true;
@@ -91,6 +102,7 @@ private:
     QString room, msgType;
     QString attachment, thumbnail;
     int attachmentSize;
+    double sentProgress = 0.0;
 
 signals:
     void senderChanged();
@@ -99,6 +111,7 @@ signals:
     void attachmentChanged();
     void attachmentSizeChanged();
     void thumbnailChanged();
+    void sentProgressChanged();
 };
 
 class Member : public QObject {

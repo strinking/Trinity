@@ -10,6 +10,9 @@ Rectangle {
     Image {
         id: imagePreview
 
+        width: 500
+        fillMode: Image.PreserveAspectFit
+
         anchors.centerIn: parent
 
         source: url

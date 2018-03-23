@@ -47,6 +47,8 @@ public:
     Q_INVOKABLE void sendMessage(Room* room, const QString& message);
     Q_INVOKABLE void removeMessage(const QString& eventId);
 
+    Q_INVOKABLE void uploadAttachment(Room* room, const QString& path);
+
     Q_INVOKABLE void startDirectChat(const QString& id);
 
     Q_INVOKABLE void setTyping(Room* room);

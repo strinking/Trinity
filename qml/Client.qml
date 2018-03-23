@@ -1,6 +1,7 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
+import QtQuick.Dialogs 1.2
 
 import trinity.matrix 1.0
 
@@ -447,6 +448,8 @@ Rectangle {
 
                         property string attachment: display.attachment
                         property var sender: matrix.resolveMemberId(display.sender)
+                        property var eventId: display.eventId
+                        property var msg: display.msg
 
                         Image {
                             id: avatar
@@ -552,6 +555,9 @@ Rectangle {
                                 visible: display.msgType === "image"
 
                                 source: display.thumbnail
+
+                                fillMode: Image.PreserveAspectFit
+                                width: Math.min(sourceSize.width, 400)
                             }
 
                             MouseArea {
@@ -750,6 +756,8 @@ Rectangle {
 
                     ToolTip.text: "Attach File"
                     ToolTip.visible: hovered
+
+                    onReleased: openAttachmentFileDialog.open()
                 }
 
                 TextArea {
@@ -1041,5 +1049,21 @@ Rectangle {
             if(shouldDisplay)
                 desktop.showMessage(matrix.resolveMemberId(sender).displayName + " (" + room.name + ")", content)
         }
+    }
+
+    FileDialog {
+        id: openAttachmentFileDialog
+        folder: shortcuts.home
+
+        selectExisting: true
+        selectFolder: false
+        selectMultiple: false
+
+        onAccepted: {
+            matrix.uploadAttachment(matrix.currentRoom, fileUrl)
+            close()
+        }
+
+        onRejected: close()
     }
 }

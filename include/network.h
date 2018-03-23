@@ -32,8 +32,8 @@ namespace network {
     manager->post(request, jsonPost);
   }
 
-  template<typename Fn>
-  inline void postBinary(const QString& path, const QByteArray data, const QString mimeType, Fn&& fn) {
+  template<typename Fn, typename ProgressFn>
+  inline void postBinary(const QString& path, const QByteArray data, const QString mimeType, Fn&& fn, ProgressFn&& progressFn) {
     QNetworkRequest request(homeserverURL + path);
     request.setHeader(QNetworkRequest::ContentTypeHeader, mimeType);
     request.setRawHeader("Authorization", accessToken.toLocal8Bit());
@@ -47,7 +47,8 @@ namespace network {
 
     QObject::connect(manager, &QNetworkAccessManager::finished, sender, &RequestSender::finished);
 
-    manager->post(request, data);
+    QNetworkReply* reply = manager->post(request, data);
+    QObject::connect(reply, &QNetworkReply::uploadProgress, progressFn);
   }
 
   template<typename Fn>
